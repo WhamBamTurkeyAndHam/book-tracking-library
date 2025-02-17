@@ -102,6 +102,7 @@ input[type = search] {
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-width: 400px;
 }
 
 .logo-container {
@@ -149,6 +150,16 @@ input[type = search] {
 
 .navbar a {
   text-decoration: none;
+}
+
+.sidebar-buttons:hover {
+  color: var(--main-vanilla);
+  background-color: var(--quinary-oxford-blue);
+  transition: all 0.15s ease-in;
+  font-weight: 600;
+}
+
+.sidebar-buttons {
   color: var(--quinary-oxford-blue);
   transition: all 0.15s ease-in;
   font-size: 2rem;
@@ -157,13 +168,7 @@ input[type = search] {
   align-items: center;
   gap: 4rem;
   white-space: nowrap;
-}
-
-.navbar a:hover {
-  color: var(--main-vanilla);
-  background-color: var(--quinary-oxford-blue);
-  transition: all 0.15s ease-in;
-  font-weight: 600;
+  cursor: pointer;
 }
 
 /* Main */
@@ -189,12 +194,22 @@ input[type = search] {
   padding: 2rem;
   border-radius: 2rem;
   transition: all 0.25s ease-out;
+  cursor: pointer;
+  border: var(--quinary-oxford-blue) solid 3px;
+}
+
+.card-4 {
+  border: var(--secondary-flax) solid 3px;
 }
 
 .top-card:hover {
   transition: all 0.25s ease-in;
   transform: scale(1.02);
-  box-shadow: 0px 0px 3px 2px rgba(0,0,0,0.75);
+  box-shadow: 0px 0px 3px 1px var(--quinary-oxford-blue);
+}
+
+.card-4:hover {
+  box-shadow: 0px 0px 3px 1px var(--secondary-flax);
 }
 
 .card-1 > h3, 
@@ -302,6 +317,227 @@ input[type = search] {
   /* This is only to be seen */
 }
 
+/* Modal */
+dialog {
+  margin: auto auto;
+  border-radius: 25px;
+  box-shadow: 5px 5px 5px 2px rgba(0,0,0,0.75);
+  border: var(--quinary-oxford-blue) solid 2px;
+}
+
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  padding: 20px 30px;
+  background-color: var(--secondary-flax);
+}
+
+/* Close Button for Modal */
+.modal-close {
+  position: absolute;
+  top: 0px;
+  right: 20px;
+  border: none;
+  background: none;
+  outline: none;
+  box-shadow: none;
+  font-size: 3rem;
+  cursor: pointer;
+}
+
+.add-book {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.add-book > h3 {
+  font-size: 3rem;
+}
+
+.input {
+  font-size: 2rem;
+  padding: 1rem;
+  border: var(--quinary-oxford-blue) solid 3px;
+  background-color: #eeeeee;
+  border-radius: 25px;
+}
+
+.input,
+.ratings-container {
+  opacity: 1;
+  display: block;
+  transform: scale(1);
+  transition-property: opacity, display, transform;
+  transition-duration: 0.5s;
+  transition-behavior: allow-discrete;
+}
+
+.input.current-page.hidden,
+div.ratings-container.hidden {
+  opacity: 0;
+  display: none;
+  transform: scale(0.8);
+}
+
+@starting-style {
+  .input.current-page,
+  div.ratings-container {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+/* The switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 80px;
+  height: 50px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #b2b2b2;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 40px;
+  width: 40px;
+  left: 5px;
+  bottom: 5px;
+  background-color: white;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: var(--quaternary-giants-orange);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--quaternary-giants-orange);
+}
+
+input:checked + .slider:before {
+  transform: translateX(30px);
+}
+
+.slider.rounded {
+  border-radius: 34px;
+}
+
+.slider.rounded:before {
+  border-radius: 50%;
+}
+
+.option-left,
+.option-right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.25rem;
+  color: var(--quinary-oxford-blue);
+  font-weight: 700;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+
+.option-left {
+  left: -150px;
+  opacity: 1;
+}
+
+.option-right {
+  right: -130px;
+  opacity: 0;
+}
+
+input:checked ~ .option-left {
+  opacity: 0;
+}
+
+input:checked ~ .option-right {
+  opacity: 1;
+}
+
+.ratings-container {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 1rem;
+  padding: 0.5rem;
+  font-size: 4rem;
+  cursor: pointer;
+}
+
+.ratings-container span {
+  color: #dcdcdc;
+  transition: color 0.2s;
+  -webkit-text-stroke: 3px var(--quinary-oxford-blue);
+}
+
+.ratings-container span:hover,
+.ratings-container span:hover ~ span {
+  color: gold;
+}
+
+.ratings-container.selected span {
+  color: gold;
+}
+
+.submit-btn {
+  font-size: 2rem;
+  padding: 1rem;
+  background-color: var(--quinary-oxford-blue);
+  color: var(--main-vanilla);
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.15s ease-out;
+}
+
+.submit-btn:hover {
+  background-color: var(--main-vanilla);
+  font-weight: 800;
+  color: var(--quinary-oxford-blue);
+  transition: all 0.15s ease-in;
+}
+
+/* Animations */
+dialog[open] {
+  animation: fadeIn 0.25s ease-in forwards;
+}
+
+@keyframes fadeIn{
+  0%{
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  100%{
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Media Queries */
 @media (max-width: 1500px) {
   .top-card-left,
   .top-card-right {
