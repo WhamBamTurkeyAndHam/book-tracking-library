@@ -249,8 +249,7 @@ input[type = search] {
 .bottom-cards-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
-  grid-template-rows: repeat(auto-fit, minmax(300px, 1fr));
-  grid-auto-rows: 1fr;
+  grid-template-rows: repeat(auto-fill, minmax(400px, 1fr));
   gap: 3rem;
   padding: 5rem 0 5rem 0;
 }
@@ -258,6 +257,7 @@ input[type = search] {
 .bottom-card {
   display: grid;
   grid-template-columns: 250px auto 1fr;
+  grid-template-rows: 400px;
   border-radius: 2rem;
   background-color: white;
 }
@@ -386,11 +386,58 @@ div.ratings-container.hidden {
 }
 
 @starting-style {
-  .input.current-page,
+  .input,
   div.ratings-container {
     opacity: 0;
     transform: scale(0.8);
   }
+}
+
+#imageUpload {
+  display: none;
+}
+
+.image-button {
+  background-color: var(--quinary-oxford-blue);
+  color: var(--main-vanilla);
+  border: var(--quinary-oxford-blue) solid 2px;
+  padding: 1rem;
+  border-radius: 25px;
+  font-size: 1.5rem;
+  margin: 1rem 0 1rem 0;
+  cursor: pointer;
+  transition: all 0.15s ease-out;
+}
+
+.image-button:hover {
+  background-color: var(--main-vanilla);
+  color: var(--quinary-oxford-blue);
+  transition: all 0.15s ease-in;
+  font-weight: 800;
+  border: var(--quinary-oxford-blue) solid 2px;
+}
+
+.warning-container {
+  position: relative;
+  padding: 1rem;
+  border-radius: 10px;
+  background-color: var(--secondary-flax);
+}
+
+.warning-container::after {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 10px solid var(--triangle-color);
+}
+
+#imageWarning {
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 /* The switch */
@@ -488,6 +535,15 @@ input:checked ~ .option-right {
   cursor: pointer;
 }
 
+.ratings-container-small {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 0.5rem;
+  font-size: 2rem;
+  -webkit-text-stroke: 2px var(--quinary-oxford-blue);
+}
+
 .ratings-container span {
   color: #dcdcdc;
   transition: color 0.2s;
@@ -506,6 +562,7 @@ input:checked ~ .option-right {
 .submit-btn {
   font-size: 2rem;
   padding: 1rem;
+  margin: 1rem 0 1rem 0;
   background-color: var(--quinary-oxford-blue);
   color: var(--main-vanilla);
   border-radius: 25px;

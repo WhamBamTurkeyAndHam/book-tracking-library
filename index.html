@@ -8,8 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
-  <script src="https://kit.fontawesome.com/1cae399f64.js" crossorigin="anonymous"></script>
-  <title>Book Tracker</title> <!-- Probably have another name -->
+  <title>My Little Book Tracker</title>
 </head>
 <body>
   <div class="main-container">
@@ -71,40 +70,6 @@
         </div>
       </div>
       <div class="bottom-cards-container">
-        <div class="bottom-card">
-          <div class="bottom-card-left">
-            <img src="img/annefrank.jpg" alt="anne frank's book cover">
-          </div>
-          <div class="book-status-read"></div> <!-- Will adapt to what is set by user-->
-          <div class="bottom-card-right">
-            <div class="bottom-card-details">
-              <h3 class="name">The Diary of a Young Girl</h3>
-              <p class="author">By Anne Frank</p>
-            </div>
-            <div class="bottom-card-status">
-              <div class="pages">currentPages/totalPages Pages</div> <!-- Would dynamically change in JS-->
-              <div class="status">Read</div>
-              <div class="rating">★★★★★</div>
-            </div>
-          </div>
-        </div>
-        <div class="bottom-card">
-          <div class="bottom-card-left">
-            <img src="img/BraveNewWorld.jpg" alt="Aldous Huxley's book cover">
-          </div>
-          <div class="book-status-reading"></div> <!-- Will adapt to what is set by user-->
-          <div class="bottom-card-right">
-            <div class="bottom-card-details">
-              <h3 class="name">Brave New World</h3>
-              <p class="author">By Aldous Huxley</p>
-            </div>
-            <div class="bottom-card-status">
-              <div class="pages">currentPages/totalPages Pages</div> <!-- Would dynamically change in JS-->
-              <div class="status">Reading</div>
-              <div class="rating">☆☆☆☆☆</div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
     <footer class="footer"></footer>
@@ -113,18 +78,21 @@
         <form class="add-book">
           <h3>Add book...</h3>
           <button class="modal-close" id="closeModal">&times;</button>
-          <input class="input" type="text" id="title" placeholder="Title...">
-          <input class="input" type="text" id="author" placeholder="Author...">
-          <label for="imageUpload">Choose a book cover to upload:</label>
-          <input type="file" id="imageUpload" name="image" accept="image/*">
+          <input class="input" type="text" id="title" required placeholder="Title...">
+          <input class="input" type="text" id="author" required placeholder="Author...">
+          <label class="image-button" for="imageUpload">Choose a book cover to upload</label>
+          <input type="file" id="imageUpload" name="imageUpload" accept="image/jpeg, image/png, image/jpg" required>
+          <div class="warning-container">
+            <p id="imageWarning"></p>
+          </div>
           <label class="switch">
             <input type="checkbox">
             <span class="slider rounded"></span>
             <span class="option-left">I Haven't read it</span>
             <span class="option-right">I Have read it</span>
           </label>
-          <input class="input current-page" type="tel" id="currentPages" pattern="^[0-9]{1,4}$" placeholder="Current Page...">
-          <input class="input" type="tel" id="totalPages" pattern="^[0-9]{1,4}$" placeholder="Total Pages...">
+          <input class="input current-page" type="tel" id="currentPages" pattern="^[0-9]{1,4}$" required placeholder="Current Page...">
+          <input class="input" type="tel" id="totalPages" pattern="^[0-9]{1,4}$" required placeholder="Total Pages...">
           <div class="ratings-container hidden">
             <span data-value="5">★</span>
             <span data-value="4">★</span>
