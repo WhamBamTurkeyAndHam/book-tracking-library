@@ -14,6 +14,8 @@ const imageWarning = document.querySelector('#imageWarning');
 const imageWarningContainer = document.querySelector('.warning-container');
 let selectedRating = 0;
 
+// Store books here.
+const myLibrary = [];
 
 // If a file is not selected.
 function warningDefault() {
@@ -116,9 +118,6 @@ function updateStars(value) {
   });
 }
 
-// Store books here.
-const myLibrary = [];
-
 // Construct Books here.
 function Book(imageUrl, readingStatus, title, author, currentPages, totalPages, rating) {
   this.imageUrl = imageUrl;
@@ -172,7 +171,17 @@ function addBookToLibrary(imageUrl, readingStatus, title, author, currentPages, 
 }
 
 function displayBooks() {
-  const bookContainer =  document.querySelector('.bottom-cards-container');
+  const bookContainer =  document.querySelector('.book-wrapper');
+
+  function checkContainer() {
+    const overlay = document.querySelector('#overlay');
+  
+    if (bookContainer.children.length > 0) {
+      overlay.classList.add("hidden");
+    } else {
+      overlay.classList.remove("hidden");
+    }
+  }
 
   bookContainer.innerHTML = '';
 
@@ -269,17 +278,6 @@ function displayBooks() {
       return svg;
     }
 
-    // Edit icon SVG path.
-      // const editIconPath = "M18.13 12L19.39 10.74C19.83 10.3 20.39 10.06 21 10V9L15 3H5C3.89 3 3 3.89 3 5V19C3 20.1 3.89 21 5 21H11V19.13L11.13 19H5V5H12V12H18.13M14 4.5L19.5 10H14V4.5M19.13 13.83L21.17 15.87L15.04 22H13V19.96L19.13 13.83M22.85 14.19L21.87 15.17L19.83 13.13L20.81 12.15C21 11.95 21.33 11.95 21.53 12.15L22.85 13.47C23.05 13.67 23.05 14 22.85 14.19Z";
-
-    // Delete icon SVG path.
-    const deleteIconPath = "M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z";
-
-      // Create the Edit button.
-      // const editButton = document.createElement('button');
-      // editButton.classList.add("card-button", "card-edit-button");
-      // editButton.appendChild(createSVGIcon(editIconPath));
-
     // Create the "toggle read status" button.
     const spanRight = document.createElement('span');
     spanRight.classList.add('option-right');
@@ -319,50 +317,52 @@ function displayBooks() {
     });
 
     // Create the Delete button.
+    // Delete icon SVG path.
+    const deleteIconPath = "M9,3V4H4V6H5V19A2,2 0 0,0 7,21H17A2,2 0 0,0 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z";
+
     const deleteButton = document.createElement("button");
     deleteButton.classList.add("card-button", "card-delete-button");
     deleteButton.appendChild(createSVGIcon(deleteIconPath));
 
+    // Delete Button.
+    deleteButton.addEventListener("click", function() {
+      const cardToDelete = this.closest('.bottom-card'); // Find the closest bottom card.
+      const bookIndex = cardToDelete.getAttribute("data-index");
+    
+      // Find the index, delete only that card.
+      myLibrary.splice(bookIndex, 1);
+
+      // Refresh the display to show updated status.
+      displayBooks();
+    });
+
     // Append everything together.
     //
     // Append the elements to the bookCardDetails div (The Top Right).
-    bottomCardDetails.appendChild(bookTitle);
-    bottomCardDetails.appendChild(bookAuthor);
+    bottomCardDetails.append(bookTitle, bookAuthor);
+
+    // Append the elements to the bookCardStatus div (The Middle Right).
+    bottomCardStatus.append(bookPages, ratingsContainer);
 
     // Append the elements to the bookCardStatus div (The Bottom Right).
-    bottomCardStatus.appendChild(bookPages);
-    bottomCardStatus.appendChild(ratingsContainer);
+    bottomCardButtons.append(toggleReadButton, deleteButton);
 
-    // Append buttons to container.
-    bottomCardButtons.appendChild(toggleReadButton);
-      // bottomCardButtons.appendChild(editButton);
-    bottomCardButtons.appendChild(deleteButton);
+    // Append the elements to the bottomCardRight div (Merge The Top Right, Middle Right and Bottom Right).
+    bottomCardRight.append(bottomCardDetails, bottomCardStatus, bottomCardButtons);
 
-    // Append the element to the bottomCardRight div (Merge The Top Right and Bottom Right).
-    bottomCardRight.appendChild(bottomCardDetails);
-    bottomCardRight.appendChild(bottomCardStatus);
-    bottomCardRight.appendChild(bottomCardButtons);
-
+    // Add everything to the Bottom Card.
+    //
     // Create the bottomCard div.
     const bottomCard = document.createElement('div');
     bottomCard.classList.add('bottom-card');
 
     // Append the everything to the bottomCard.
-    bottomCard.appendChild(bookCardLeft);
-    bottomCard.appendChild(bookCardMiddle);
-    bottomCard.appendChild(bottomCardRight);
-    bottomCard.setAttribute("data-index", index); // Assign data-index
-
-    // Delete Button.
-    deleteButton.addEventListener("click", function() {
-      const cardToDelete = this.closest('.bottom-card'); // Find the closest bottom card
-      const bookIndex = cardToDelete.getAttribute("data-index");
-    
-      myLibrary.splice(bookIndex, 1);
-      displayBooks();
-    });
+    bottomCard.append(bookCardLeft, bookCardMiddle, bottomCardRight);
+    bottomCard.setAttribute("data-index", index); // Assign data-index.
 
     // Append the bottomCard to the main container.
     bookContainer.appendChild(bottomCard);
   });
+
+  checkContainer();
 }
