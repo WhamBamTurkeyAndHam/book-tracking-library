@@ -1,9 +1,13 @@
+const pagesRead = document.querySelector('.pages-read');
+const booksRead = document.querySelector('.books-read');
+const booksTrade = document.querySelector('.books-traded');
+const booksRating = document.querySelector('.books-ratings');
 const modal = document.querySelector('#modal');
 const openModal = document.querySelector('#openModal');
 const closeModal = document.querySelector('#closeModal');
 const titleInput = document.querySelector('#title');
 const authorInput = document.querySelector('#author');
-const toggleSwitch = document.querySelector('.switch input');
+const toggleReadSwitch = document.querySelector('.reading-switch input');
 const currentPageInput = document.querySelector('.current-page');
 const totalPageInput = document.querySelector('#totalPages');
 const ratingsContainer = document.querySelector('.ratings-container');
@@ -13,6 +17,7 @@ const imageUpload = document.querySelector('#imageUpload');
 const imageWarning = document.querySelector('#imageWarning');
 const imageWarningContainer = document.querySelector('.warning-container');
 let selectedRating = 0;
+let booksTotalTradeBefore = 0;
 
 // Store books here.
 const myLibrary = [];
@@ -53,7 +58,7 @@ openModal.addEventListener("click", () => {
   titleInput.value = '';
   authorInput.value = '';
   
-  if (!toggleSwitch.checked) {
+  if (!toggleReadSwitch.checked) {
     currentPageInput.value = '';
     totalPageInput.value = '';
     currentPageInput.classList.remove('hidden');
@@ -73,8 +78,8 @@ closeModal.addEventListener("click", () => {
 });
 
 // Switch adds or removes extra inputs depending on if you have read a book, or not.
-document.querySelector('.switch input').addEventListener("change", function () {
-  if (!toggleSwitch.checked) {
+document.querySelector('.reading-switch input').addEventListener("change", function () {
+  if (!toggleReadSwitch.checked) {
     currentPageInput.classList.remove('hidden');
     ratingsContainer.classList.add('hidden');
     currentPageInput.setAttribute('required', '');
@@ -119,7 +124,7 @@ function updateStars(value) {
 }
 
 // Construct Books here.
-function Book(imageUrl, readingStatus, title, author, currentPages, totalPages, rating) {
+function Book(imageUrl, readingStatus, title, author, currentPages, totalPages, rating, trade) {
   this.imageUrl = imageUrl;
   this.readingStatus = readingStatus;
   this.title = title;
@@ -127,6 +132,7 @@ function Book(imageUrl, readingStatus, title, author, currentPages, totalPages, 
   this.currentPages = currentPages;
   this.totalPages = totalPages;
   this.rating = rating;
+  this.trade = trade;
 }
 
 bookForm.addEventListener('submit', function (event) {
@@ -138,12 +144,12 @@ bookForm.addEventListener('submit', function (event) {
   const totalPagesInput = document.querySelector('#totalPages');
   const rating = selectedRating;
 
-  if(toggleSwitch.checked) {
+  if(toggleReadSwitch.checked) {
     currentPagesInput.value = totalPagesInput.value;
   }
 
-  const currentPages = currentPagesInput.value;
-  const totalPages = totalPagesInput.value;
+  const currentPages = parseInt(currentPagesInput.value, 10);
+  const totalPages = parseInt(totalPagesInput.value, 10);
 
   // Handle image file.
   const imageUploadInput = document.querySelector('#imageUpload');
@@ -154,7 +160,7 @@ bookForm.addEventListener('submit', function (event) {
   reader.onloadend = function () {
     imageUrl = reader.result; // Base64 URL.
 
-    const readingStatus = toggleSwitch.checked;
+    const readingStatus = toggleReadSwitch.checked;
 
     addBookToLibrary(imageUrl, readingStatus, title, author, currentPages, totalPages, rating);
     displayBooks();
@@ -166,11 +172,12 @@ bookForm.addEventListener('submit', function (event) {
 
 // Take parameters, create a book then store it in the array.
 function addBookToLibrary(imageUrl, readingStatus, title, author, currentPages, totalPages, rating) {
-  const newBook = new Book(imageUrl, readingStatus, title, author, currentPages, totalPages, rating);
+  const newBook = new Book(imageUrl, readingStatus, title, author, currentPages, totalPages, rating, false);
   myLibrary.push(newBook);
 }
 
 function displayBooks() {
+
   const bookContainer =  document.querySelector('.book-wrapper');
 
   function checkContainer() {
@@ -181,6 +188,53 @@ function displayBooks() {
     } else {
       overlay.classList.remove("hidden");
     }
+  }
+
+  // Change Pages This Month card.
+  function updatePage() {
+    const pageTotal = myLibrary.reduce((sum, book) => {
+      return sum + book.currentPages;
+    }, 0);
+    
+    pagesRead.textContent = pageTotal;
+  }
+
+  // Change Books Completed This Year card.
+  function updateStatus(books) {
+    let totalStatus = 0;
+
+    books.forEach(book => {
+      if (book.readingStatus) {
+        totalStatus += book.readingStatus;
+      }
+    });
+
+    booksRead.textContent = totalStatus;
+  }
+
+  // Change Books Traded card.
+  function updateTrade() {
+    const tradedCount = myLibrary.filter(book => book.trade).length;
+    booksTrade.textContent = tradedCount;
+  }
+
+  // Change Average Star Rating card.
+  function updateRating(books) {
+    let totalRating = 0;
+    let count = 0;
+
+    // Loop through the books array to sum the ratings.
+    books.forEach(book => {
+      if (book.rating) {
+          totalRating += book.rating;
+          count++;
+        }
+    });
+
+    // If the average rating is above a 0, average it. Otherwise leave at 0 (to avoid division by 0)
+    // and simply say 'No Stars Yet'.
+    const averageRating = count > 0 ? (totalRating / count).toFixed(2) : 0;
+    averageRating === 0 ? booksRating.textContent = 'No Stars Yet' : booksRating.textContent = `${averageRating} Stars`;
   }
 
   bookContainer.innerHTML = '';
@@ -213,8 +267,10 @@ function displayBooks() {
     }
     
     // For the middle.
-    if (book.readingStatus) {
-      bookCardMiddle.classList.add('book-status-read'); // If it has been read.
+    if (book.trade === true) {
+      bookCardMiddle.classList.add('book-trade')
+    } else if (book.readingStatus) {
+      bookCardMiddle.classList.add('book-status-read');
     } else {
       bookCardMiddle.classList.add('book-status-reading');
     }
@@ -279,27 +335,30 @@ function displayBooks() {
     }
 
     // Create the "toggle read status" button.
-    const spanRight = document.createElement('span');
-    spanRight.classList.add('option-right');
-    const spanLeft = document.createElement('span');
-    spanLeft.classList.add('option-left');
+    const spanReadingRight = document.createElement('span');
+    spanReadingRight.textContent = "I Have Read It";
+    spanReadingRight.classList.add('reading-option-right-small');
+    const spanReadingLeft = document.createElement('span');
+    spanReadingLeft.textContent = "I Haven't read It";
+    spanReadingLeft.classList.add('reading-option-left-small');
 
-    const spanSlider = document.createElement('span');
-    spanSlider.classList.add('slider', 'rounded');
+    const spanReadingSlider = document.createElement('span');
+    spanReadingSlider.classList.add('reading-slider', 'rounded');
 
-    const switchInput = document.createElement('input');
-    switchInput.setAttribute('type', 'checkbox');
+    const switchReadingInput = document.createElement('input');
+    switchReadingInput.classList.add('.reading-checkbox');
+    switchReadingInput.setAttribute('type', 'checkbox');
 
     const toggleReadButton = document.createElement('label');
-    toggleReadButton.classList.add('switch');
+    toggleReadButton.classList.add('reading-switch');
 
-    toggleReadButton.append(switchInput, spanSlider, spanLeft, spanRight);
+    toggleReadButton.append(switchReadingInput, spanReadingSlider, spanReadingLeft, spanReadingRight);
 
     // Set initial state of the toggle based on book's readingStatus.
-    switchInput.checked = book.readingStatus;
+    switchReadingInput.checked = book.readingStatus;
 
-    // Add event listener to the toggle switch
-    switchInput.addEventListener('change', function() {
+    // Add event listener to the read toggle switch.
+    switchReadingInput.addEventListener('change', function() {
       const card = this.closest('.bottom-card');
       const index = card.getAttribute('data-index');
       const book = myLibrary[index];
@@ -313,6 +372,7 @@ function displayBooks() {
       }
       
       // Refresh the display to show updated status.
+      updatePage();
       displayBooks();
     });
 
@@ -333,6 +393,42 @@ function displayBooks() {
       myLibrary.splice(bookIndex, 1);
 
       // Refresh the display to show updated status.
+      updatePage();
+      updateTrade();
+      updateStatus(myLibrary);
+      updateRating(myLibrary);
+      displayBooks();
+    });
+
+    // Create the "toggle trade status" button.
+    const spanTradingRight = document.createElement('span');
+    spanTradingRight.textContent = "I Want To Trade It";
+    spanTradingRight.classList.add('trading-option-right-small');
+    const spanTradingLeft = document.createElement('span');
+    spanTradingLeft.textContent = "I Don't Want To Trade It";
+    spanTradingLeft.classList.add('trading-option-left-small');
+
+    const spanTradingSlider = document.createElement('span');
+    spanTradingSlider.classList.add('trading-slider', 'rounded');
+
+    const switchTradingInput = document.createElement('input');
+    switchTradingInput.classList.add('trading-checkbox');
+    switchTradingInput.setAttribute('type', 'checkbox');
+
+    const toggleTradeButton = document.createElement('label');
+    toggleTradeButton.classList.add('trading-switch');
+
+    toggleTradeButton.append(switchTradingInput, spanTradingSlider, spanTradingLeft, spanTradingRight);
+
+    // Add event listener to the trade toggle switch.
+    switchTradingInput.checked = book.trade;
+
+    switchTradingInput.addEventListener('change', function() {
+      const card = this.closest('.bottom-card');
+      const index = card.getAttribute('data-index');
+      const book = myLibrary[index];
+      book.trade = this.checked;
+      updateTrade();
       displayBooks();
     });
 
@@ -345,7 +441,7 @@ function displayBooks() {
     bottomCardStatus.append(bookPages, ratingsContainer);
 
     // Append the elements to the bookCardStatus div (The Bottom Right).
-    bottomCardButtons.append(toggleReadButton, deleteButton);
+    bottomCardButtons.append(toggleReadButton, deleteButton, toggleTradeButton);
 
     // Append the elements to the bottomCardRight div (Merge The Top Right, Middle Right and Bottom Right).
     bottomCardRight.append(bottomCardDetails, bottomCardStatus, bottomCardButtons);
@@ -365,4 +461,7 @@ function displayBooks() {
   });
 
   checkContainer();
+  updatePage();
+  updateStatus(myLibrary);
+  updateRating(myLibrary);
 }

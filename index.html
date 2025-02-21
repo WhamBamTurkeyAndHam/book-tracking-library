@@ -51,21 +51,21 @@
         <div class="top-card-left">
           <div class="top-card card-1">
             <h3>Pages This Month</h3>
-            <p>3,219</p>
+            <p class="pages-read">0</p>
           </div>
           <div class="top-card card-2">
             <h3>Books Completed This Year</h3>
-            <p>23</p>
+            <p class="books-read">0</p>
           </div>
         </div>
         <div class="top-card-right">
           <div class="top-card card-3">
             <h3>Books Traded</h3>
-            <p>26</p>
+            <p class="books-traded">0</p>
           </div>
           <div class="top-card card-4">
             <h3>Average Star Rating</h3>
-            <p>4.32 Stars</p>
+            <p class="books-ratings">No Stars Yet</p>
           </div>
         </div>
       </div>
@@ -88,11 +88,11 @@
           <div class="warning-container">
             <p id="imageWarning"></p>
           </div>
-          <label class="switch">
-            <input type="checkbox">
-            <span class="slider rounded"></span>
-            <span class="option-left">I Haven't read it</span>
-            <span class="option-right">I Have read it</span>
+          <label class="reading-switch">
+            <input class="reading-checkbox" type="checkbox">
+            <span class="reading-slider rounded"></span>
+            <span class="reading-option-left">I Haven't Read It</span>
+            <span class="reading-option-right">I Have Read It</span>
           </label>
           <input class="input current-page" type="tel" id="currentPages" pattern="^[0-9]{1,4}$" required placeholder="Current Page...">
           <input class="input" type="tel" id="totalPages" pattern="^[0-9]{1,4}$" required placeholder="Total Pages...">

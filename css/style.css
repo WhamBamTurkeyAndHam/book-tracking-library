@@ -26,7 +26,7 @@ body, button, input, select, textarea, option, optgroup, legend, fieldset, outpu
   display: grid;
   height: 100vh;
   grid-template-columns: 1fr 6fr;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr;
 }
 
 /* Header */
@@ -102,7 +102,6 @@ input[type = search] {
   display: flex;
   flex-direction: column;
   height: 100%;
-  min-width: 400px;
 }
 
 .logo-container {
@@ -257,7 +256,7 @@ input[type = search] {
   justify-content: center;
   align-items: center;
   font-size: 3rem;
-  transition: opacity 0.75s ease;
+  transition: opacity 0.5s ease;
   position: absolute;
   width: 100%;
   height: 100%;
@@ -275,7 +274,7 @@ input[type = search] {
 
 .book-wrapper {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(700px, 1fr));
   grid-template-rows: repeat(auto-fill, minmax(350px, 1fr));
   gap: 3rem;
   margin: 5rem 0 5rem 0;
@@ -322,16 +321,23 @@ input[type = search] {
   transform: scale(1.05);
 }
 
-.book-status-read {
-  height: 100%;
-  width: 10px;
-  background-color: var(--tertiary-sandy-brown); /* For visibility */
-}
-
+.book-trade,
+.book-status-read,
 .book-status-reading {
   height: 100%;
   width: 10px;
-  background-color: var(--secondary-flax); /* For visibility */
+}
+
+.book-trade {
+  background-color: var(--quaternary-giants-orange);
+}
+
+.book-status-read {
+  background-color: var(--tertiary-sandy-brown);
+}
+
+.book-status-reading {
+  background-color: var(--secondary-flax);
 }
 
 .bottom-card-right {
@@ -368,7 +374,8 @@ input[type = search] {
 
 .card-button-container {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-around;
+  align-items: center;
   gap: 2rem;
 }
 
@@ -531,21 +538,24 @@ div.ratings-container.hidden {
   font-weight: 700;
 }
 
-/* The switch */
-.switch {
+/* The Reading and Trading Switch */
+.trading-switch,
+.reading-switch {
   position: relative;
   display: inline-block;
   width: 80px;
   height: 50px;
 }
 
-.switch input {
+.trading-switch input,
+.reading-switch input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.slider {
+.reading-slider,
+.trading-slider {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -556,7 +566,8 @@ div.ratings-container.hidden {
   transition: 0.4s;
 }
 
-.slider:before {
+.reading-slider:before,
+.trading-slider:before {
   position: absolute;
   content: "";
   height: 40px;
@@ -567,28 +578,32 @@ div.ratings-container.hidden {
   transition: 0.4s;
 }
 
-input:checked + .slider {
-  background-color: var(--quaternary-giants-orange);
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px var(--quaternary-giants-orange);
-}
-
-input:checked + .slider:before {
+input:checked + .reading-slider:before,
+input:checked + .trading-slider:before {
   transform: translateX(30px);
 }
 
-.slider.rounded {
+.reading-slider.rounded,
+.trading-slider.rounded {
   border-radius: 34px;
 }
 
-.slider.rounded:before {
+.reading-slider.rounded:before,
+.trading-slider.rounded:before {
   border-radius: 50%;
 }
 
-.option-left,
-.option-right {
+/* The Reading Switch */
+input:checked + .reading-slider {
+  background-color: var(--tertiary-sandy-brown);
+}
+
+input:focus + .reading-slider {
+  box-shadow: 0 0 1px var(--tertiary-sandy-brown);
+}
+
+.reading-option-left,
+.reading-option-right {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -597,26 +612,89 @@ input:checked + .slider:before {
   font-weight: 700;
   transition: opacity 0.4s;
   pointer-events: none;
+  text-align: center;
 }
 
-.option-left {
-  left: -150px;
+.reading-option-left {
+  left: -160px;
   opacity: 1;
 }
 
-.option-right {
-  right: -130px;
+.reading-option-right {
+  right: -140px;
   opacity: 0;
 }
 
-input:checked ~ .option-left {
-  opacity: 0;
+.reading-option-left-small,
+.reading-option-right-small,
+.trading-option-left-small,
+.trading-option-right-small {
+  top: 100%;
+  transform: translateY(-100%);
+  position: absolute;
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: opacity 0.4s;
+  white-space: nowrap;
 }
 
-input:checked ~ .option-right {
+.reading-option-left-small {
+  top: 0;
+  left: -10px;
   opacity: 1;
 }
 
+.reading-option-right-small {
+  top: 0;
+  opacity: 0;
+}
+
+input:checked ~ .reading-option-left-small {
+  opacity: 0;
+}
+
+input:checked ~ .reading-option-right-small {
+  opacity: 1;
+}
+
+input:checked ~ .reading-option-left {
+  opacity: 0;
+}
+
+input:checked ~ .reading-option-right {
+  opacity: 1;
+}
+
+/* The Trade Switch */
+input:checked + .trading-slider {
+  background-color: var(--quaternary-giants-orange);
+}
+
+input:focus + .trading-slider {
+  box-shadow: 0 0 1px var(--quaternary-giants-orange);
+}
+
+.trading-option-left-small {
+  top: 0;
+  left: -40px;
+  opacity: 1;
+}
+
+.trading-option-right-small {
+  top: 0;
+  left: -20px;
+  opacity: 0;
+}
+
+input:checked ~ .trading-option-left-small {
+  opacity: 0;
+}
+
+input:checked ~ .trading-option-right-small {
+  opacity: 1;
+}
+
+/* Ratings */
 .ratings-container {
   display: flex;
   flex-direction: row-reverse;
