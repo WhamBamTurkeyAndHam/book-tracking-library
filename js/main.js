@@ -151,6 +151,14 @@ bookForm.addEventListener('submit', function (event) {
   const currentPages = parseInt(currentPagesInput.value, 10);
   const totalPages = parseInt(totalPagesInput.value, 10);
 
+  if (currentPages > totalPages){
+    currentPageInput.classList.add('shake');
+    currentPageInput.addEventListener('animationend', () => {
+      currentPageInput.classList.remove('shake');
+    });
+    return
+  }
+
   // Handle image file.
   const imageUploadInput = document.querySelector('#imageUpload');
   const imageFile = imageUploadInput.files[0];
