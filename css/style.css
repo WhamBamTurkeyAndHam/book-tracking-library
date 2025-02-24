@@ -102,6 +102,7 @@ input[type = search] {
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-width: 350px;
 }
 
 .logo-container {
@@ -165,7 +166,7 @@ input[type = search] {
   padding: 1rem 2rem;
   display: flex;
   align-items: center;
-  gap: 4rem;
+  gap: 5rem;
   white-space: nowrap;
   cursor: pointer;
 }
@@ -446,7 +447,8 @@ dialog::backdrop {
   cursor: pointer;
 }
 
-.add-book {
+.add-book,
+.edit-current-page {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -454,7 +456,8 @@ dialog::backdrop {
   gap: 1rem;
 }
 
-.add-book > h3 {
+.add-book > h3,
+.edit-current-page > h3 {
   font-size: 3rem;
 }
 
@@ -491,7 +494,8 @@ div.ratings-container.hidden {
   }
 }
 
-.input.current-page.shake {
+.input.current-page.shake,
+.input.new-current-page.shake {
   animation: shake 0.75s;
   border: red solid 3px;
 }

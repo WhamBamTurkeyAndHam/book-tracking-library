@@ -16,6 +16,9 @@ const bookForm = document.querySelector('.add-book');
 const imageUpload = document.querySelector('#imageUpload');
 const imageWarning = document.querySelector('#imageWarning');
 const imageWarningContainer = document.querySelector('.warning-container');
+const editModal = document.querySelector('.edit-current-page-modal');
+const closeEditModal = document.querySelector('#closeEditModal');
+const editInput = document.querySelector('#newCurrentPages');
 let selectedRating = 0;
 let booksTotalTradeBefore = 0;
 
@@ -377,11 +380,49 @@ function displayBooks() {
       // If marked as read, set current pages to total pages.
       if (book.readingStatus) {
         book.currentPages = book.totalPages;
+
+        // Refresh the display to show updated status.
+        updatePage();
+        displayBooks();
+      } else {
+        // Set the currentPages to be in the input field.
+        editInput.value = book.currentPages;
+        editModal.showModal();
+        
+        const handleSubmit = function(event) {
+          event.preventDefault();
+
+          const newCurrentPages = parseInt(editInput.value, 10);
+
+          if (newCurrentPages > book.totalPages) {
+            editInput.classList.add('shake');
+            editInput.addEventListener('animationend', () => {
+              editInput.classList.remove('shake');
+            });
+          } else {
+            book.currentPages = newCurrentPages;
+            if (book.currentPages === book.totalPages) {
+              book.readingStatus = true;
+            }
+            editModal.close();
+            updatePage();
+            displayBooks();
+          };
+        }
+        
+        editModal.removeEventListener('submit', handleSubmit);
+        editModal.addEventListener('submit', handleSubmit);
+      }
+
+      function handleCancel() {
+        editInput.value = book.currentPages;
+        switchReadingInput.checked = true;
+        editModal.close();
       }
       
-      // Refresh the display to show updated status.
-      updatePage();
-      displayBooks();
+      // Make sure there isn't multiple listeners.
+      closeEditModal.removeEventListener('click', handleCancel);
+      closeEditModal.addEventListener('click', handleCancel);
     });
 
     // Create the Delete button.
