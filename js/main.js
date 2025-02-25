@@ -10,8 +10,8 @@ const authorInput = document.querySelector('#author');
 const toggleReadSwitch = document.querySelector('.reading-switch input');
 const currentPageInput = document.querySelector('.current-page');
 const totalPageInput = document.querySelector('#totalPages');
-const ratingsContainer = document.querySelector('.ratings-container');
-const stars = document.querySelectorAll(".ratings-container span");
+const ratingsContainer = document.querySelector('.ratings-container, .new-ratings-container');
+const stars = document.querySelectorAll('.ratings-container span, .new-ratings-container span');
 const bookForm = document.querySelector('.add-book');
 const imageUpload = document.querySelector('#imageUpload');
 const imageWarning = document.querySelector('#imageWarning');
@@ -19,6 +19,9 @@ const imageWarningContainer = document.querySelector('.warning-container');
 const editModal = document.querySelector('.edit-current-page-modal');
 const closeEditModal = document.querySelector('#closeEditModal');
 const editInput = document.querySelector('#newCurrentPages');
+const ratingModal = document.querySelector('.edit-rating-modal');
+const closeRatingModal = document.querySelector('#closeRatingModal');
+const ratingInput = document.querySelector('.new-ratings-container');
 let selectedRating = 0;
 let booksTotalTradeBefore = 0;
 
@@ -100,29 +103,24 @@ stars.forEach(star => {
   // Make each star have an eventlistener.
   star.addEventListener('click', () => {
     selectedRating = parseInt(star.getAttribute('data-value'));
-    updateStars(selectedRating);
+    updateStars(stars, selectedRating);
   });
 
   // Handle hover for stars.
   star.addEventListener('mouseover', () => {
     let hoverValue = parseInt(star.getAttribute('data-value'));
-    updateStars(hoverValue);
+    updateStars(stars, hoverValue);
   });
 
   // Reset to the selected star when the mouse leaves.
   star.addEventListener('mouseleave', () => {
-    updateStars(selectedRating);
+    updateStars(stars, selectedRating);
   });
 })
 
-// Update the color of the stars based on the rating.
-function updateStars(value) {
+function updateStars(stars, value) {
   stars.forEach(star => {
-    if(parseInt(star.getAttribute('data-value')) <= value) {
-      star.style.color = 'gold';
-    } else {
-      star.style.color = '#CCC'
-    }
+    star.style.color = parseInt(star.getAttribute('data-value')) <= value ? 'gold' : '#CCC';
   });
 }
 
@@ -377,19 +375,35 @@ function displayBooks() {
       // Update reading status.
       book.readingStatus = this.checked;
       
-      // If marked as read, set current pages to total pages.
       if (book.readingStatus) {
-        book.currentPages = book.totalPages;
+        const modalStars = ratingModal.querySelectorAll('.new-ratings-container span');
+        updateStars(modalStars, selectedRating); // Update modal stars only
+        ratingModal.showModal();
 
-        // Refresh the display to show updated status.
-        updatePage();
-        displayBooks();
+        // Star click handlers for this modal instance
+        modalStars.forEach(star => {
+          star.addEventListener('click', function handleStarClick() {
+            selectedRating = parseInt(this.getAttribute('data-value'));
+            updateStars(modalStars, selectedRating);
+          });
+        });
+
+        const handleRatingSubmit = function(event) {
+          event.preventDefault();
+          book.currentPages = book.totalPages;
+          book.rating = selectedRating;
+          
+          ratingModal.close();
+          displayBooks();
+        }
+
+        ratingModal.addEventListener('submit', handleRatingSubmit, { once: true });
       } else {
         // Set the currentPages to be in the input field.
         editInput.value = book.currentPages;
         editModal.showModal();
         
-        const handleSubmit = function(event) {
+        const handlePageEditSubmit = function(event) {
           event.preventDefault();
 
           const newCurrentPages = parseInt(editInput.value, 10);
@@ -401,28 +415,44 @@ function displayBooks() {
             });
           } else {
             book.currentPages = newCurrentPages;
+
             if (book.currentPages === book.totalPages) {
               book.readingStatus = true;
+              book.rating = selectedRating;
+            } else {
+              book.rating = 0;
             }
+
             editModal.close();
             updatePage();
             displayBooks();
           };
         }
         
-        editModal.removeEventListener('submit', handleSubmit);
-        editModal.addEventListener('submit', handleSubmit);
+        editModal.addEventListener('submit', handlePageEditSubmit, { once: true });
       }
 
-      function handleCancel() {
+      function handleRatingCancel(event) {
+        event.preventDefault();
+        selectedRating = 0;
+        switchReadingInput.checked = false;
+        book.readingStatus = false;
+        ratingModal.close();
+      }
+
+      closeRatingModal.removeEventListener('click', handleRatingCancel);
+      closeRatingModal.addEventListener('click', handleRatingCancel);
+
+      function handlePageEditCancel(event) {
+        event.preventDefault();
         editInput.value = book.currentPages;
         switchReadingInput.checked = true;
         editModal.close();
       }
       
       // Make sure there isn't multiple listeners.
-      closeEditModal.removeEventListener('click', handleCancel);
-      closeEditModal.addEventListener('click', handleCancel);
+      closeEditModal.removeEventListener('click', handlePageEditCancel);
+      closeEditModal.addEventListener('click', handlePageEditCancel);
     });
 
     // Create the Delete button.

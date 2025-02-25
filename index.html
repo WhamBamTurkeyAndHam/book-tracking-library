@@ -79,7 +79,7 @@
     <dialog class="modal" id="modal">
       <div class="modal-content">
         <form class="add-book">
-          <h3>Add book...</h3>
+          <h3>Add Book...</h3>
           <button class="modal-close" id="closeModal">&times;</button>
           <input class="input" type="text" id="title" required placeholder="Title...">
           <input class="input" type="text" id="author" required placeholder="Author...">
@@ -108,16 +108,31 @@
       </div>
     </dialog>
     <dialog class="edit-current-page-modal">
-    <div class="modal-content">
-      <form class="edit-current-page">
-        <h3>Edit book...</h3>
-        <button class="modal-close" id="closeEditModal">&times;</button>
-        <input class="input new-current-page" type="tel" id="newCurrentPages" pattern="^[0-9]{1,4}$" placeholder="Current Page...">
-        <button class="submit-btn" type="submit">Update Pages</button>
-      </form>
-    </div>
+      <div class="modal-content">
+        <form class="edit-current-page">
+          <h3>Edit Page...</h3>
+          <button class="modal-close" id="closeEditModal">&times;</button>
+          <input class="input new-current-page" type="tel" id="newCurrentPages" pattern="^[0-9]{1,4}$" placeholder="Current Page...">
+          <button class="submit-btn" type="submit">Update Pages</button>
+        </form>
+      </div>
     </dialog>
-    <dialog class="edit-rating-modal"></dialog>
+    <dialog class="edit-rating-modal">
+      <div class="modal-content">
+        <form class="edit-current-rating">
+          <h3>Edit Rating...</h3>
+          <button class="modal-close" id="closeRatingModal">&times;</button>
+          <div class="new-ratings-container">
+            <span data-value="5">★</span>
+            <span data-value="4">★</span>
+            <span data-value="3">★</span>
+            <span data-value="2">★</span>
+            <span data-value="1">★</span>
+          </div>
+          <button class="submit-btn" type="submit">Update Rating</button>
+        </form>
+      </div>
+    </dialog>
   </div>
 </body>
 </html>

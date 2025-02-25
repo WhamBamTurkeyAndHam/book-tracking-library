@@ -448,7 +448,8 @@ dialog::backdrop {
 }
 
 .add-book,
-.edit-current-page {
+.edit-current-page,
+.edit-current-rating {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -457,7 +458,8 @@ dialog::backdrop {
 }
 
 .add-book > h3,
-.edit-current-page > h3 {
+.edit-current-page > h3,
+.edit-current-rating > h3 {
   font-size: 3rem;
 }
 
@@ -470,7 +472,8 @@ dialog::backdrop {
 }
 
 .input,
-.ratings-container {
+.ratings-container,
+.new-ratings-container {
   opacity: 1;
   display: block;
   transform: scale(1);
@@ -722,7 +725,8 @@ input:checked ~ .trading-option-right-small {
 }
 
 /* Ratings */
-.ratings-container {
+.ratings-container,
+.new-ratings-container  {
   display: flex;
   flex-direction: row-reverse;
   gap: 1rem;
@@ -740,18 +744,22 @@ input:checked ~ .trading-option-right-small {
   -webkit-text-stroke: 2px var(--quinary-oxford-blue);
 }
 
-.ratings-container span {
+.ratings-container span,
+.new-ratings-container span {
   color: #dcdcdc;
   transition: color 0.2s;
   -webkit-text-stroke: 3px var(--quinary-oxford-blue);
 }
 
 .ratings-container span:hover,
-.ratings-container span:hover ~ span {
+.ratings-container span:hover ~ span,
+.new-ratings-container span:hover,
+.new-ratings-container span:hover ~ span {
   color: gold;
 }
 
-.ratings-container.selected span {
+.ratings-container.selected span,
+.new-ratings-container.selected span {
   color: gold;
 }
 
