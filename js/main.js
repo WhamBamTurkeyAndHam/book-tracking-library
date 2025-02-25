@@ -145,9 +145,7 @@ bookForm.addEventListener('submit', function (event) {
   const totalPagesInput = document.querySelector('#totalPages');
   const rating = selectedRating;
 
-  if(toggleReadSwitch.checked) {
-    currentPagesInput.value = totalPagesInput.value;
-  }
+  if(toggleReadSwitch.checked) currentPagesInput.value = totalPagesInput.value;
 
   const currentPages = parseInt(currentPagesInput.value, 10);
   const totalPages = parseInt(totalPagesInput.value, 10);
@@ -192,11 +190,7 @@ function displayBooks() {
   function checkContainer() {
     const overlay = document.querySelector('#overlay');
   
-    if (bookContainer.children.length > 0) {
-      overlay.classList.add("hidden");
-    } else {
-      overlay.classList.remove("hidden");
-    }
+    bookContainer.children.length > 0 ? overlay.classList.add('hidden') : overlay.classList.remove('hidden');
   }
 
   // Change Pages This Month card.
@@ -213,9 +207,7 @@ function displayBooks() {
     let totalStatus = 0;
 
     books.forEach(book => {
-      if (book.readingStatus) {
-        totalStatus += book.readingStatus;
-      }
+      if (book.readingStatus) totalStatus += book.readingStatus;
     });
 
     booksRead.textContent = totalStatus;
@@ -276,13 +268,10 @@ function displayBooks() {
     }
     
     // For the middle.
-    if (book.trade === true) {
-      bookCardMiddle.classList.add('book-trade')
-    } else if (book.readingStatus) {
-      bookCardMiddle.classList.add('book-status-read');
-    } else {
-      bookCardMiddle.classList.add('book-status-reading');
-    }
+
+    book.trade === true ? bookCardMiddle.classList.add('book-trade') : 
+    book.readingStatus ? bookCardMiddle.classList.add('book-status-read') : 
+                        bookCardMiddle.classList.add('book-status-reading');
 
     // For right side.
     //
@@ -315,11 +304,7 @@ function displayBooks() {
       star.textContent = '★'
 
       // Based on the rating, color the stars accordingly.
-      if (i < book.rating) {
-        star.style.color = 'gold';
-      } else {
-        star.style.color = '#CCC';
-      }
+      i < book.rating ? star.style.color = 'gold' : star.style.color = '#CCC';
 
       ratingsContainer.appendChild(star);
     }
