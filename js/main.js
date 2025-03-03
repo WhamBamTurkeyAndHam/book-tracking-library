@@ -1,3 +1,4 @@
+// Store const here.
 const pagesRead = document.querySelector('.pages-read');
 const booksRead = document.querySelector('.books-read');
 const booksTrade = document.querySelector('.books-traded');
@@ -14,87 +15,110 @@ const ratingsContainer = document.querySelector('.ratings-container, .new-rating
 const stars = document.querySelectorAll('.ratings-container span, .new-ratings-container span');
 const bookForm = document.querySelector('.add-book');
 const imageUpload = document.querySelector('#imageUpload');
-const imageWarning = document.querySelector('#imageWarning');
-const imageWarningContainer = document.querySelector('.warning-container');
-const editModal = document.querySelector('.edit-current-page-modal');
+const imageWarning = document.querySelectorAll('.image-warning');
+const imageWarningContainer = document.querySelectorAll('.warning-container');
+const editModal = document.querySelector('#editModal');
 const closeEditModal = document.querySelector('#closeEditModal');
-const editInput = document.querySelector('#newCurrentPages');
-const ratingModal = document.querySelector('.edit-rating-modal');
-const closeRatingModal = document.querySelector('#closeRatingModal');
-const ratingInput = document.querySelector('.new-ratings-container');
-let selectedRating = 0;
-let booksTotalTradeBefore = 0;
+const editTitle = editModal.querySelector('#newTitle');
+const editAuthor = editModal.querySelector('#newAuthor');
+const editImageWarning = editModal.querySelectorAll('.new-image-warning');
+const editImageWarningContainer = editModal.querySelectorAll('.new-warning-container');
+const newToggleReadSwitch = editModal.querySelector('.new-reading-switch input');
+const editCurrentPages = editModal.querySelector('#newCurrentPages');
+const editTotalPages = editModal.querySelector('#newTotalPages')
+const newRatingsContainer = editModal.querySelector('.new-ratings-container');
+const bookContainer = document.querySelector('.bottom-cards-container');
+const bookWrapper =  document.querySelector('.book-wrapper');
 
-// Store books here.
+// Store books and let here.
 const myLibrary = [];
+let selectedRating = 0;
+let editSelectedRating = 0;
+
+// When the page loads, ensure a warning message is displayed for the image.
+window.addEventListener('DOMContentLoaded', () => {
+  allImageWarning();
+});
 
 // If a file is not selected.
-function warningDefault() {
-  imageWarning.textContent = "PLEASE SELECT AN IMAGE FILE.";
-  imageWarning.style.color = "red";
-  imageWarningContainer.style.backgroundColor = 'rgb(255, 165, 165)'
-  imageWarningContainer.style.border = "red solid 2px";
-  imageWarningContainer.style.setProperty('--triangle-color', 'red');
+function allImageWarning() {
+  imageWarning.forEach(imageWarning => {
+    imageWarning.textContent = "PLEASE SELECT AN IMAGE FILE.";
+    imageWarning.style.color = "red";
+  });
+  imageWarningContainer.forEach(imageWarningContainer => {
+    imageWarningContainer.style.backgroundColor = 'rgb(255, 165, 165)'
+    imageWarningContainer.style.border = "red solid 2px";
+    imageWarningContainer.style.setProperty('--triangle-color', 'red');
+  });
 }
-
-// When the page loads, ensure a warning message is displayed.
-window.addEventListener('DOMContentLoaded', () => {
-  warningDefault();
-});
 
 // Event listener for when the user selects a file.
 imageUpload.addEventListener('change', function() {
   if (imageUpload.files.length > 0) {
     // If a file is selected.
-    imageWarning.textContent = "FILE SELECTED SUCCESSFULLY!";
-    imageWarning.style.color = "green";
-    imageWarningContainer.style.backgroundColor = 'rgb(210, 255, 210)'
-    imageWarningContainer.style.border = "green solid 2px";
-    imageWarningContainer.style.setProperty('--triangle-color', 'green');
+    imageWarning.forEach(imageWarning => {
+      imageWarning.textContent = "FILE SELECTED SUCCESSFULLY!";
+      imageWarning.style.color = "green";
+    });
+    imageWarningContainer.forEach(imageWarningContainer => {
+      imageWarningContainer.style.backgroundColor = 'rgb(210, 255, 210)'
+      imageWarningContainer.style.border = "green solid 2px";
+      imageWarningContainer.style.setProperty('--triangle-color', 'green');
+    });
   } else {
     // If a file is not selected.
-    warningDefault();
+    allImageWarning();
   }
 });
+
+// Read status toggle.
+function toggleOff() {
+  currentPageInput.classList.remove('hidden');
+  ratingsContainer.classList.add('hidden');
+  currentPageInput.setAttribute('required', '');
+}
+
+function toggleOn() {
+  currentPageInput.classList.add('hidden');
+  ratingsContainer.classList.remove('hidden');
+  currentPageInput.removeAttribute('required');
+}
 
 openModal.addEventListener("click", () => {
   modal.showModal();
   imageUpload.value = '';
-  warningDefault();
+  allImageWarning();
   titleInput.value = '';
   authorInput.value = '';
   
   if (!toggleReadSwitch.checked) {
     currentPageInput.value = '';
     totalPageInput.value = '';
-    currentPageInput.classList.remove('hidden');
-    ratingsContainer.classList.add('hidden');
-    currentPageInput.setAttribute('required', '');
+    toggleOff();
   } else {
     currentPageInput.value = '';
     totalPageInput.value = '';
-    currentPageInput.classList.add('hidden');
-    ratingsContainer.classList.remove('hidden');
-    currentPageInput.removeAttribute('required');
+    toggleOn();
   }
 });
 
-closeModal.addEventListener("click", () => {
+closeModal.addEventListener('click', () => {
   modal.close();
 });
+
+closeEditModal.addEventListener('click', () => {
+  editModal.close();
+})
 
 // Switch adds or removes extra inputs depending on if you have read a book, or not.
 document.querySelector('.reading-switch input').addEventListener("change", function () {
   if (!toggleReadSwitch.checked) {
-    currentPageInput.classList.remove('hidden');
-    ratingsContainer.classList.add('hidden');
-    currentPageInput.setAttribute('required', '');
+    toggleOff();
     selectedRating = 0;
     updateStars(selectedRating);
   } else {
-    currentPageInput.classList.add('hidden');
-    ratingsContainer.classList.remove('hidden');
-    currentPageInput.removeAttribute('required');
+    toggleOn();
   }
 });
 
@@ -185,12 +209,10 @@ function addBookToLibrary(imageUrl, readingStatus, title, author, currentPages, 
 
 function displayBooks() {
 
-  const bookContainer =  document.querySelector('.book-wrapper');
-
   function checkContainer() {
     const overlay = document.querySelector('#overlay');
   
-    bookContainer.children.length > 0 ? overlay.classList.add('hidden') : overlay.classList.remove('hidden');
+    bookWrapper.children.length > 0 ? overlay.classList.add('hidden') : overlay.classList.remove('hidden');
   }
 
   // Change Pages This Month card.
@@ -238,7 +260,7 @@ function displayBooks() {
     averageRating === 0 ? booksRating.textContent = 'No Stars Yet' : booksRating.textContent = `${averageRating} Stars`;
   }
 
-  bookContainer.innerHTML = '';
+  bookWrapper.innerHTML = '';
 
   myLibrary.forEach((book, index) => {
     // Create the left container.
@@ -328,117 +350,14 @@ function displayBooks() {
       return svg;
     }
 
-    // Create the "toggle read status" button.
-    const spanReadingRight = document.createElement('span');
-    spanReadingRight.textContent = "I Have Read It";
-    spanReadingRight.classList.add('reading-option-right-small');
-    const spanReadingLeft = document.createElement('span');
-    spanReadingLeft.textContent = "I Haven't read It";
-    spanReadingLeft.classList.add('reading-option-left-small');
+    // Create the Edit button.
+    // Edit icon SVG path.
+    const editIconPath = "M18.13 12L19.39 10.74C19.83 10.3 20.39 10.06 21 10V9L15 3H5C3.89 3 3 3.89 3 5V19C3 20.1 3.89 21 5 21H11V19.13L11.13 19H5V5H12V12H18.13M14 4.5L19.5 10H14V4.5M19.13 13.83L21.17 15.87L15.04 22H13V19.96L19.13 13.83M22.85 14.19L21.87 15.17L19.83 13.13L20.81 12.15C21 11.95 21.33 11.95 21.53 12.15L22.85 13.47C23.05 13.67 23.05 14 22.85 14.19Z";
 
-    const spanReadingSlider = document.createElement('span');
-    spanReadingSlider.classList.add('reading-slider', 'rounded');
-
-    const switchReadingInput = document.createElement('input');
-    switchReadingInput.classList.add('.reading-checkbox');
-    switchReadingInput.setAttribute('type', 'checkbox');
-
-    const toggleReadButton = document.createElement('label');
-    toggleReadButton.classList.add('reading-switch');
-
-    toggleReadButton.append(switchReadingInput, spanReadingSlider, spanReadingLeft, spanReadingRight);
-
-    // Set initial state of the toggle based on book's readingStatus.
-    switchReadingInput.checked = book.readingStatus;
-
-    // Add event listener to the read toggle switch.
-    switchReadingInput.addEventListener('change', function() {
-      const card = this.closest('.bottom-card');
-      const index = card.getAttribute('data-index');
-      const book = myLibrary[index];
-      
-      // Update reading status.
-      book.readingStatus = this.checked;
-      
-      if (book.readingStatus) {
-        const modalStars = ratingModal.querySelectorAll('.new-ratings-container span');
-        updateStars(modalStars, selectedRating); // Update modal stars only
-        ratingModal.showModal();
-
-        // Star click handlers for this modal instance
-        modalStars.forEach(star => {
-          star.addEventListener('click', function handleStarClick() {
-            selectedRating = parseInt(this.getAttribute('data-value'));
-            updateStars(modalStars, selectedRating);
-          });
-        });
-
-        const handleRatingSubmit = function(event) {
-          event.preventDefault();
-          book.currentPages = book.totalPages;
-          book.rating = selectedRating;
-          
-          ratingModal.close();
-          displayBooks();
-        }
-
-        ratingModal.addEventListener('submit', handleRatingSubmit, { once: true });
-      } else {
-        // Set the currentPages to be in the input field.
-        editInput.value = book.currentPages;
-        editModal.showModal();
-        
-        const handlePageEditSubmit = function(event) {
-          event.preventDefault();
-
-          const newCurrentPages = parseInt(editInput.value, 10);
-
-          if (newCurrentPages > book.totalPages) {
-            editInput.classList.add('shake');
-            editInput.addEventListener('animationend', () => {
-              editInput.classList.remove('shake');
-            });
-          } else {
-            book.currentPages = newCurrentPages;
-
-            if (book.currentPages === book.totalPages) {
-              book.readingStatus = true;
-              book.rating = selectedRating;
-            } else {
-              book.rating = 0;
-            }
-
-            editModal.close();
-            updatePage();
-            displayBooks();
-          };
-        }
-        
-        editModal.addEventListener('submit', handlePageEditSubmit, { once: true });
-      }
-
-      function handleRatingCancel(event) {
-        event.preventDefault();
-        selectedRating = 0;
-        switchReadingInput.checked = false;
-        book.readingStatus = false;
-        ratingModal.close();
-      }
-
-      closeRatingModal.removeEventListener('click', handleRatingCancel);
-      closeRatingModal.addEventListener('click', handleRatingCancel);
-
-      function handlePageEditCancel(event) {
-        event.preventDefault();
-        editInput.value = book.currentPages;
-        switchReadingInput.checked = true;
-        editModal.close();
-      }
-      
-      // Make sure there isn't multiple listeners.
-      closeEditModal.removeEventListener('click', handlePageEditCancel);
-      closeEditModal.addEventListener('click', handlePageEditCancel);
-    });
+    const editButton = document.createElement('button');
+    editButton.classList.add("card-button", "card-edit-button");
+    editButton.setAttribute('id', 'openEditModal');
+    editButton.appendChild(createSVGIcon(editIconPath));
 
     // Create the Delete button.
     // Delete icon SVG path.
@@ -505,7 +424,7 @@ function displayBooks() {
     bottomCardStatus.append(bookPages, ratingsContainer);
 
     // Append the elements to the bookCardStatus div (The Bottom Right).
-    bottomCardButtons.append(toggleReadButton, deleteButton, toggleTradeButton);
+    bottomCardButtons.append(editButton, toggleTradeButton, deleteButton);
 
     // Append the elements to the bottomCardRight div (Merge The Top Right, Middle Right and Bottom Right).
     bottomCardRight.append(bottomCardDetails, bottomCardStatus, bottomCardButtons);
@@ -521,7 +440,7 @@ function displayBooks() {
     bottomCard.setAttribute("data-index", index); // Assign data-index.
 
     // Append the bottomCard to the main container.
-    bookContainer.appendChild(bottomCard);
+    bookWrapper.appendChild(bottomCard);
   });
 
   checkContainer();

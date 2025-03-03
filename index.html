@@ -86,7 +86,7 @@
           <label class="image-button" for="imageUpload">Choose a book cover to upload</label>
           <input type="file" id="imageUpload" name="imageUpload" accept="image/jpeg, image/png, image/jpg" required>
           <div class="warning-container">
-            <p id="imageWarning"></p>
+            <p class="image-warning"></p>
           </div>
           <label class="reading-switch">
             <input class="reading-checkbox" type="checkbox">
@@ -107,21 +107,26 @@
         </form>
       </div>
     </dialog>
-    <dialog class="edit-current-page-modal">
+    <dialog class="edit-modal" id="editModal">
       <div class="modal-content">
-        <form class="edit-current-page">
-          <h3>Edit Page...</h3>
+        <form class="edit-book">
+          <h3>Edit Book...</h3>
           <button class="modal-close" id="closeEditModal">&times;</button>
+          <input class="input" type="text" id="newTitle" required placeholder="Title...">
+          <input class="input" type="text" id="newAuthor" required placeholder="Author...">
+          <label class="new-image-button" for="newImageUpload">Optionally update the book cover</label>
+          <input type="file" id="newImageUpload" name="newImageUpload" accept="image/jpeg, image/png, image/jpg">
+          <div class="new-warning-container">
+            <p class="new-image-warning"></p>
+          </div>
+          <label class="new-reading-switch">
+            <input class="reading-checkbox" type="checkbox">
+            <span class="reading-slider rounded"></span>
+            <span class="reading-option-left">I Haven't Read It</span>
+            <span class="reading-option-right">I Have Read It</span>
+          </label>
           <input class="input new-current-page" type="tel" id="newCurrentPages" pattern="^[0-9]{1,4}$" placeholder="Current Page...">
-          <button class="submit-btn" type="submit">Update Pages</button>
-        </form>
-      </div>
-    </dialog>
-    <dialog class="edit-rating-modal">
-      <div class="modal-content">
-        <form class="edit-current-rating">
-          <h3>Edit Rating...</h3>
-          <button class="modal-close" id="closeRatingModal">&times;</button>
+          <input class="input" type="tel" id="newTotalPages" pattern="^[0-9]{1,4}$" required placeholder="Total Pages...">
           <div class="new-ratings-container">
             <span data-value="5">★</span>
             <span data-value="4">★</span>
@@ -129,7 +134,7 @@
             <span data-value="2">★</span>
             <span data-value="1">★</span>
           </div>
-          <button class="submit-btn" type="submit">Update Rating</button>
+          <button class="submit-btn" type="submit">Update Book</button>
         </form>
       </div>
     </dialog>

@@ -430,7 +430,7 @@ dialog::backdrop {
 }
 
 .modal-content {
-  padding: 20px 30px;
+  padding: 1rem 2rem;
   background-color: var(--secondary-flax);
 }
 
@@ -449,7 +449,8 @@ dialog::backdrop {
 
 .add-book,
 .edit-current-page,
-.edit-current-rating {
+.edit-current-rating,
+.edit-book {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -459,7 +460,8 @@ dialog::backdrop {
 
 .add-book > h3,
 .edit-current-page > h3,
-.edit-current-rating > h3 {
+.edit-current-rating > h3,
+.edit-book > h3 {
   font-size: 3rem;
 }
 
@@ -483,7 +485,9 @@ dialog::backdrop {
 }
 
 .input.current-page.hidden,
-div.ratings-container.hidden {
+div.ratings-container.hidden,
+.input.new-current-page.hidden,
+div.new-ratings-container.hidden {
   opacity: 0;
   display: none;
   transform: scale(0.8);
@@ -491,7 +495,8 @@ div.ratings-container.hidden {
 
 @starting-style {
   .input,
-  div.ratings-container {
+  div.ratings-container,
+  div.new-ratings-container {
     opacity: 0;
     transform: scale(0.8);
   }
@@ -521,11 +526,15 @@ div.ratings-container.hidden {
   }
 }
 
-#imageUpload {
+#imageUpload,
+#newImageUpload {
   display: none;
 }
 
-.image-button {
+.image-button,
+.new-image-button {
+  width: 425px;
+  text-align: center;
   background-color: var(--quinary-oxford-blue);
   color: var(--main-vanilla);
   border: var(--quinary-oxford-blue) solid 2px;
@@ -537,7 +546,12 @@ div.ratings-container.hidden {
   transition: all 0.15s ease-out;
 }
 
-.image-button:hover {
+.new-image-button {
+  margin: 1rem;
+}
+
+.image-button:hover,
+.new-image-button:hover {
   background-color: var(--main-vanilla);
   color: var(--quinary-oxford-blue);
   transition: all 0.15s ease-in;
@@ -545,14 +559,16 @@ div.ratings-container.hidden {
   border: var(--quinary-oxford-blue) solid 2px;
 }
 
-.warning-container {
+.warning-container,
+.new-warning-container {
   position: relative;
   padding: 1rem;
   border-radius: 10px;
   background-color: var(--secondary-flax);
 }
 
-.warning-container::after {
+.warning-container::after,
+.new-warning-container::after {
   content: '';
   position: absolute;
   top: -10px;
@@ -563,14 +579,16 @@ div.ratings-container.hidden {
   border-bottom: 10px solid var(--triangle-color);
 }
 
-#imageWarning {
+.image-warning,
+.new-image-warning {
   font-size: 1rem;
   font-weight: 700;
 }
 
 /* The Reading and Trading Switch */
 .trading-switch,
-.reading-switch {
+.reading-switch,
+.new-reading-switch {
   position: relative;
   display: inline-block;
   width: 80px;
@@ -578,7 +596,8 @@ div.ratings-container.hidden {
 }
 
 .trading-switch input,
-.reading-switch input {
+.reading-switch input,
+.new-reading-switch input {
   opacity: 0;
   width: 0;
   height: 0;
