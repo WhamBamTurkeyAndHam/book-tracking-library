@@ -21,6 +21,7 @@ const editModal = document.querySelector('#editModal');
 const closeEditModal = document.querySelector('#closeEditModal');
 const editTitle = editModal.querySelector('#newTitle');
 const editAuthor = editModal.querySelector('#newAuthor');
+const newImageUpload = editModal.querySelector('#newImageUpload');
 const editImageWarning = editModal.querySelectorAll('.new-image-warning');
 const editImageWarningContainer = editModal.querySelectorAll('.new-warning-container');
 const newToggleReadSwitch = editModal.querySelector('.new-reading-switch input');
@@ -206,6 +207,248 @@ function addBookToLibrary(imageUrl, readingStatus, title, author, currentPages, 
   const newBook = new Book(imageUrl, readingStatus, title, author, currentPages, totalPages, rating, false);
   myLibrary.push(newBook);
 }
+
+// Event delegation for edit buttons.
+bookContainer.addEventListener('click', (event) => {
+
+  const editButton = event.target.closest('.card-edit-button');
+  if (!editButton) return;
+
+  const card = editButton.closest('.bottom-card');
+  const index = parseInt(card.getAttribute('data-index'));
+  const book = myLibrary[index];
+
+  editModal.showModal();
+
+  editTitle.value = book.title;
+  editAuthor.value = book.author;
+  newToggleReadSwitch.checked = book.readingStatus;
+  editCurrentPages.value = book.currentPages;
+  editTotalPages.value = book.totalPages;
+  editSelectedRating = book.rating;
+
+  if (book.imageUrl) {
+    // Set a flag to indicate we have an existing image
+    editModal.dataset.hasExistingImage = "true";
+    editModal.dataset.existingImageUrl = book.imageUrl;
+    
+    // Show a message that an image is already selected
+    if (editImageWarning && editImageWarningContainer) {
+      editImageWarning.forEach(warning => {
+        warning.textContent = "IMAGE ALREADY SELECTED!";
+        warning.style.color = "green";
+      });
+      editImageWarningContainer.forEach(container => {
+        container.style.backgroundColor = 'rgb(210, 255, 210)';
+        container.style.border = "green solid 2px";
+        container.style.setProperty('--triangle-color', 'green');
+      });
+    }
+  } else {
+    // No existing image
+    editModal.dataset.hasExistingImage = "false";
+    
+    // Show the usual warning
+    if (editImageWarning && editImageWarningContainer) {
+      editImageWarning.forEach(warning => {
+        warning.textContent = "PLEASE SELECT AN IMAGE FILE.";
+        warning.style.color = "red";
+      });
+      editImageWarningContainer.forEach(container => {
+        container.style.backgroundColor = 'rgb(255, 165, 165)';
+        container.style.border = "red solid 2px";
+        container.style.setProperty('--triangle-color', 'red');
+      });
+    }
+  }
+
+  // Handle image upload change event
+  newImageUpload.addEventListener('change', function() {
+    if (newImageUpload.files.length > 0) {
+      // Update the warning for a new file selection
+      editImageWarning.forEach(warning => {
+        warning.textContent = "NEW FILE SELECTED!";
+        warning.style.color = "green";
+      });
+      editImageWarningContainer.forEach(container => {
+        container.style.backgroundColor = 'rgb(210, 255, 210)';
+        container.style.border = "green solid 2px";
+        container.style.setProperty('--triangle-color', 'green');
+      });
+      // Add a flag to indicate a new image is selected
+      editModal.dataset.newImageSelected = "true";
+    } else {
+      // Reset to the existing image status
+      if (editModal.dataset.hasExistingImage === "true") {
+        editImageWarning.forEach(warning => {
+          warning.textContent = "IMAGE ALREADY SELECTED!";
+          warning.style.color = "green";
+        });
+        editImageWarningContainer.forEach(container => {
+          container.style.backgroundColor = 'rgb(210, 255, 210)';
+          container.style.border = "green solid 2px";
+          container.style.setProperty('--triangle-color', 'green');
+        });
+      } else {
+        editImageWarning.forEach(warning => {
+          warning.textContent = "PLEASE SELECT AN IMAGE FILE.";
+          warning.style.color = "red";
+        });
+        editImageWarningContainer.forEach(container => {
+          container.style.backgroundColor = 'rgb(255, 165, 165)';
+          container.style.border = "red solid 2px";
+          container.style.setProperty('--triangle-color', 'red');
+        });
+      }
+      editModal.dataset.newImageSelected = "false";
+    }
+  });
+
+  // Set initial visibility based on reading status
+  if (!newToggleReadSwitch.checked) {
+    editCurrentPages.classList.remove('hidden');
+    newRatingsContainer.classList.add('hidden');
+    editCurrentPages.setAttribute('required', '');
+  } else {
+    editCurrentPages.classList.add('hidden');
+    newRatingsContainer.classList.remove('hidden');
+    editCurrentPages.removeAttribute('required');
+  }
+
+  // Define the handler as a variable
+  const handleSwitchChange = function() {
+    if (this.checked) {
+      editCurrentPages.classList.add('hidden');
+      newRatingsContainer.classList.remove('hidden');
+      editCurrentPages.removeAttribute('required');
+    } else {
+      editCurrentPages.classList.remove('hidden');
+      newRatingsContainer.classList.add('hidden');
+      editCurrentPages.setAttribute('required', '');
+    }
+  };
+
+  // Add event listener using the variable
+  newToggleReadSwitch.addEventListener('change', handleSwitchChange);
+
+  const editStars = newRatingsContainer.querySelectorAll('span');
+
+  updateStars(editStars, editSelectedRating);
+
+  editStars.forEach(star => {
+    // Remove any existing event listeners to prevent duplicates
+    star.replaceWith(star.cloneNode(true));
+  });
+
+  const freshEditStars = newRatingsContainer.querySelectorAll('span');
+
+  // Make each star have an event listener.
+  freshEditStars.forEach(star => {
+    star.addEventListener('click', () => {
+      editSelectedRating = parseInt(star.getAttribute('data-value'));
+      updateStars(freshEditStars, editSelectedRating);
+    });
+
+    // Handle hover for stars.
+    star.addEventListener('mouseover', () => {
+      let hoverValue = parseInt(star.getAttribute('data-value'));
+      updateStars(freshEditStars, hoverValue);
+    });
+
+    // Reset to the selected star when the mouse leaves.
+    star.addEventListener('mouseleave', () => {
+      updateStars(freshEditStars, editSelectedRating);
+    });
+  });
+
+  editModal.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+  // Edit Title Section.
+  book.title = editTitle.value;
+
+  // Edit Author Section.
+  book.author = editAuthor.value;
+
+ // Edit Image Section.
+  const newCurrentPages = parseInt(editCurrentPages.value, 10);
+  const newTotalPages = parseInt(editTotalPages.value, 10);
+
+  if (editModal.dataset.newImageSelected === "true" && newImageUpload.files.length > 0) {
+    const imageFile = newImageUpload.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = function() {
+      book.imageUrl = reader.result;
+      
+      // Update other properties, close modal and display books here.
+      book.title = editTitle.value;
+      book.author = editAuthor.value;
+      book.currentPages = newCurrentPages;
+      book.totalPages = newTotalPages;
+      
+      // Update reading status based on toggle
+      if (newToggleReadSwitch.checked) {
+        book.readingStatus = true;
+        book.rating = editSelectedRating;
+        book.currentPages = book.totalPages;
+      } else {
+        if (book.currentPages === book.totalPages) {
+          book.readingStatus = true;
+        } else {
+          book.readingStatus = false;
+          book.rating = 0;
+        }
+      }
+      
+      editModal.close();
+      displayBooks();
+    };
+    
+    reader.readAsDataURL(imageFile);
+  } else {
+    // No new image selected, keep existing image. Update each section as well.
+    book.title = editTitle.value;
+    book.author = editAuthor.value;
+    book.currentPages = newCurrentPages;
+    book.totalPages = newTotalPages;
+    
+    // Update reading status based on toggle.
+    if (newToggleReadSwitch.checked) {
+      book.readingStatus = true;
+      book.rating = editSelectedRating;
+      book.currentPages = book.totalPages;
+    } else {
+      if (book.currentPages === book.totalPages) {
+        book.readingStatus = true;
+      } else {
+        book.readingStatus = false;
+        book.rating = 0;
+      }
+    }
+    
+    editModal.close();
+    displayBooks();
+  }
+
+  // Edit Star Rating Section.
+  if (newToggleReadSwitch.checked) {
+    book.rating = editSelectedRating;
+    book.currentPages = book.totalPages;
+    book.readingStatus = true;
+  } else {
+    book.rating = 0;
+    if (book.currentPages !== book.totalPages) {
+      book.readingStatus = false;
+    }
+  }
+
+    editModal.close();
+    displayBooks();
+
+    newToggleReadSwitch.removeEventListener('change', handleSwitchChange);
+  }, { once: true });
+});
 
 function displayBooks() {
 
