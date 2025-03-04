@@ -87,17 +87,16 @@ imageUpload.addEventListener('change', function() {
   updateImageWarning(imageWarning, imageWarningContainer, imageUpload.files.length > 0);
 });
 
-// Read status toggle.
-function toggleOff() {
-  currentPageInput.classList.remove('hidden');
-  ratingsContainer.classList.add('hidden');
-  currentPageInput.setAttribute('required', '');
-}
-
-function toggleOn() {
-  currentPageInput.classList.add('hidden');
-  ratingsContainer.classList.remove('hidden');
-  currentPageInput.removeAttribute('required');
+function toggleReadStatus(isRead, currentPagesElement, ratingsElement) {
+  if (!isRead) {
+    currentPagesElement.classList.remove('hidden');
+    ratingsElement.classList.add('hidden');
+    currentPagesElement.setAttribute('required', '');
+  } else {
+    currentPagesElement.classList.add('hidden');
+    ratingsElement.classList.remove('hidden');
+    currentPagesElement.removeAttribute('required');
+  }
 }
 
 openModal.addEventListener("click", () => {
@@ -106,16 +105,12 @@ openModal.addEventListener("click", () => {
   updateImageWarning(imageWarning, imageWarningContainer, false);
   titleInput.value = '';
   authorInput.value = '';
+  currentPageInput.value = '';
+  totalPageInput.value = '';
   
-  if (!toggleReadSwitch.checked) {
-    currentPageInput.value = '';
-    totalPageInput.value = '';
-    toggleOff();
-  } else {
-    currentPageInput.value = '';
-    totalPageInput.value = '';
-    toggleOn();
-  }
+  toggleReadStatus(toggleReadSwitch.checked, currentPageInput, ratingsContainer)
+  selectedRating = 0;
+  updateStars(stars, selectedRating);
 });
 
 closeModal.addEventListener('click', () => {
@@ -127,13 +122,12 @@ closeEditModal.addEventListener('click', () => {
 })
 
 // Switch adds or removes extra inputs depending on if you have read a book, or not.
-document.querySelector('.reading-switch input').addEventListener("change", function () {
-  if (!toggleReadSwitch.checked) {
-    toggleOff();
+toggleReadSwitch.addEventListener('change', function () {
+  toggleReadStatus(this.checked, currentPageInput, ratingsContainer)
+  console.log(this.checked);
+  if (!this.checked) {
     selectedRating = 0;
-    updateStars(selectedRating);
-  } else {
-    toggleOn();
+    updateStars(stars, selectedRating);
   }
 });
 
@@ -240,108 +234,31 @@ function handleEditButton(editButton) {
   editTotalPages.value = book.totalPages;
   editSelectedRating = book.rating;
 
-  if (book.imageUrl) {
-    // Set a flag to indicate we have an existing image
-    editModal.dataset.hasExistingImage = "true";
-    editModal.dataset.existingImageUrl = book.imageUrl;
-    
-    // Show a message that an image is already selected
-    if (editImageWarning && editImageWarningContainer) {
-      editImageWarning.forEach(warning => {
-        warning.textContent = "IMAGE ALREADY SELECTED!";
-        warning.style.color = "green";
-      });
-      editImageWarningContainer.forEach(container => {
-        container.style.backgroundColor = 'rgb(210, 255, 210)';
-        container.style.border = "green solid 2px";
-        container.style.setProperty('--triangle-color', 'green');
-      });
-    }
-  } else {
-    // No existing image
-    editModal.dataset.hasExistingImage = "false";
-    
-    // Show the usual warning
-    if (editImageWarning && editImageWarningContainer) {
-      editImageWarning.forEach(warning => {
-        warning.textContent = "PLEASE SELECT AN IMAGE FILE.";
-        warning.style.color = "red";
-      });
-      editImageWarningContainer.forEach(container => {
-        container.style.backgroundColor = 'rgb(255, 165, 165)';
-        container.style.border = "red solid 2px";
-        container.style.setProperty('--triangle-color', 'red');
-      });
-    }
-  }
+  // Setup image warning display.
+  updateImageWarning(editImageWarning, editImageWarningContainer, book.imageUrl ? true : false, book.imageUrl ? true : false);
+  
+  // Store existing image info.
+  editModal.dataset.hasExistingImage = book.imageUrl ? "true" : "false";
+  editModal.dataset.existingImageUrl = book.imageUrl || "";
+  editModal.dataset.newImageSelected = "false";
 
-  // Handle image upload change event
-  newImageUpload.addEventListener('change', function() {
-    if (newImageUpload.files.length > 0) {
-      // Update the warning for a new file selection
-      editImageWarning.forEach(warning => {
-        warning.textContent = "NEW FILE SELECTED!";
-        warning.style.color = "green";
-      });
-      editImageWarningContainer.forEach(container => {
-        container.style.backgroundColor = 'rgb(210, 255, 210)';
-        container.style.border = "green solid 2px";
-        container.style.setProperty('--triangle-color', 'green');
-      });
-      // Add a flag to indicate a new image is selected
-      editModal.dataset.newImageSelected = "true";
-    } else {
-      // Reset to the existing image status
-      if (editModal.dataset.hasExistingImage === "true") {
-        editImageWarning.forEach(warning => {
-          warning.textContent = "IMAGE ALREADY SELECTED!";
-          warning.style.color = "green";
-        });
-        editImageWarningContainer.forEach(container => {
-          container.style.backgroundColor = 'rgb(210, 255, 210)';
-          container.style.border = "green solid 2px";
-          container.style.setProperty('--triangle-color', 'green');
-        });
-      } else {
-        editImageWarning.forEach(warning => {
-          warning.textContent = "PLEASE SELECT AN IMAGE FILE.";
-          warning.style.color = "red";
-        });
-        editImageWarningContainer.forEach(container => {
-          container.style.backgroundColor = 'rgb(255, 165, 165)';
-          container.style.border = "red solid 2px";
-          container.style.setProperty('--triangle-color', 'red');
-        });
-      }
-      editModal.dataset.newImageSelected = "false";
-    }
+  // Handle new image upload.
+  newImageUpload.addEventListener('change', function imageChangeHandler() {
+    updateImageWarning(editImageWarning, editImageWarningContainer, 
+      newImageUpload.files.length > 0 || book.imageUrl ? true : false, 
+      newImageUpload.files.length === 0 && book.imageUrl ? true : false);
+    
+    editModal.dataset.newImageSelected = newImageUpload.files.length > 0 ? "true" : "false";
+    
+    newImageUpload.removeEventListener('change', imageChangeHandler);
   });
 
-  // Set initial visibility based on reading status
-  if (!newToggleReadSwitch.checked) {
-    editCurrentPages.classList.remove('hidden');
-    newRatingsContainer.classList.add('hidden');
-    editCurrentPages.setAttribute('required', '');
-  } else {
-    editCurrentPages.classList.add('hidden');
-    newRatingsContainer.classList.remove('hidden');
-    editCurrentPages.removeAttribute('required');
+  // Set initial visibility based on reading status.
+  toggleReadStatus(newToggleReadSwitch.checked, editCurrentPages, newRatingsContainer);
+
+  function handleSwitchChange() {
+    toggleReadStatus(this.checked, editCurrentPages, newRatingsContainer);
   }
-
-  // Define the handler as a variable
-  const handleSwitchChange = function() {
-    if (this.checked) {
-      editCurrentPages.classList.add('hidden');
-      newRatingsContainer.classList.remove('hidden');
-      editCurrentPages.removeAttribute('required');
-    } else {
-      editCurrentPages.classList.remove('hidden');
-      newRatingsContainer.classList.add('hidden');
-      editCurrentPages.setAttribute('required', '');
-    }
-  };
-
-  // Add event listener using the variable
   newToggleReadSwitch.addEventListener('change', handleSwitchChange);
 
   const editStars = newRatingsContainer.querySelectorAll('span');
@@ -349,7 +266,7 @@ function handleEditButton(editButton) {
   updateStars(editStars, editSelectedRating);
 
   editStars.forEach(star => {
-    // Remove any existing event listeners to prevent duplicates
+    // Remove any existing event listeners to prevent duplicates.
     star.replaceWith(star.cloneNode(true));
   });
 
@@ -374,7 +291,7 @@ function handleEditButton(editButton) {
     });
   });
 
-  editModal.addEventListener('submit', (event) => {
+  editModal.addEventListener('submit', function submitHandler(event) {
     event.preventDefault();
 
   // Edit Title Section.
@@ -383,84 +300,37 @@ function handleEditButton(editButton) {
   // Edit Author Section.
   book.author = editAuthor.value;
 
- // Edit Image Section.
+ // Edit Image Section, as well as update each section.
   const newCurrentPages = parseInt(editCurrentPages.value, 10);
   const newTotalPages = parseInt(editTotalPages.value, 10);
 
-  if (editModal.dataset.newImageSelected === "true" && newImageUpload.files.length > 0) {
-    const imageFile = newImageUpload.files[0];
-    const reader = new FileReader();
-    
-    reader.onload = function() {
-      book.imageUrl = reader.result;
-      
-      // Update other properties, close modal and display books here.
+  processImageFile(newImageUpload, editModal.dataset.hasExistingImage === "true" ? book.imageUrl : null,
+    (imageUrl) => {
+      // Update book properties.
       book.title = editTitle.value;
       book.author = editAuthor.value;
-      book.currentPages = newCurrentPages;
+      book.imageUrl = imageUrl;
       book.totalPages = newTotalPages;
       
-      // Update reading status based on toggle
+      // Update reading status and pages based on toggle.
       if (newToggleReadSwitch.checked) {
         book.readingStatus = true;
         book.rating = editSelectedRating;
-        book.currentPages = book.totalPages;
+        book.currentPages = newTotalPages;
       } else {
-        if (book.currentPages === book.totalPages) {
-          book.readingStatus = true;
-        } else {
-          book.readingStatus = false;
-          book.rating = 0;
-        }
+        book.currentPages = newCurrentPages;
+        book.readingStatus = newCurrentPages === newTotalPages;
+        book.rating = book.readingStatus ? editSelectedRating : 0;
       }
-      
+
       editModal.close();
       displayBooks();
-    };
-    
-    reader.readAsDataURL(imageFile);
-  } else {
-    // No new image selected, keep existing image. Update each section as well.
-    book.title = editTitle.value;
-    book.author = editAuthor.value;
-    book.currentPages = newCurrentPages;
-    book.totalPages = newTotalPages;
-    
-    // Update reading status based on toggle.
-    if (newToggleReadSwitch.checked) {
-      book.readingStatus = true;
-      book.rating = editSelectedRating;
-      book.currentPages = book.totalPages;
-    } else {
-      if (book.currentPages === book.totalPages) {
-        book.readingStatus = true;
-      } else {
-        book.readingStatus = false;
-        book.rating = 0;
-      }
     }
-    
-    editModal.close();
-    displayBooks();
-  }
+  );
 
-  // Edit Star Rating Section.
-  if (newToggleReadSwitch.checked) {
-    book.rating = editSelectedRating;
-    book.currentPages = book.totalPages;
-    book.readingStatus = true;
-  } else {
-    book.rating = 0;
-    if (book.currentPages !== book.totalPages) {
-      book.readingStatus = false;
-    }
-  }
-
-    editModal.close();
-    displayBooks();
-
-    newToggleReadSwitch.removeEventListener('change', handleSwitchChange);
-  }, { once: true });
+  newToggleReadSwitch.removeEventListener('change', handleSwitchChange);
+  editModal.removeEventListener('submit', submitHandler);
+  });
 }
 
 // Delete Button.
@@ -472,10 +342,6 @@ function handleDeleteButton(deleteButton) {
   myLibrary.splice(bookIndex, 1);
 
   // Refresh the display to show updated status.
-  // updatePage();
-  // updateTrade();
-  // updateStatus(myLibrary);
-  // updateRating(myLibrary);
   displayBooks();
 }
 
