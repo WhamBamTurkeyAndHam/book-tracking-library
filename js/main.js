@@ -36,41 +36,55 @@ const myLibrary = [];
 let selectedRating = 0;
 let editSelectedRating = 0;
 
-// When the page loads, ensure a warning message is displayed for the image.
-window.addEventListener('DOMContentLoaded', () => {
-  allImageWarning();
-});
-
-// If a file is not selected.
-function allImageWarning() {
-  imageWarning.forEach(imageWarning => {
-    imageWarning.textContent = "PLEASE SELECT AN IMAGE FILE.";
-    imageWarning.style.color = "red";
+function updateImageWarning(warningElements, containerElements, isSelected, isExisting = false) {
+  warningElements.forEach(warning => {
+    if (isSelected) {
+      warning.textContent = isExisting ? "IMAGE ALREADY SELECTED!" : "FILE SELECTED SUCCESSFULLY!";
+      warning.style.color = "green";
+    } else {
+      warning.textContent = "PLEASE SELECT AN IMAGE FILE.";
+      warning.style.color = "red";
+    }
   });
-  imageWarningContainer.forEach(imageWarningContainer => {
-    imageWarningContainer.style.backgroundColor = 'rgb(255, 165, 165)'
-    imageWarningContainer.style.border = "red solid 2px";
-    imageWarningContainer.style.setProperty('--triangle-color', 'red');
+
+  containerElements.forEach(container => {
+    if (isSelected) {
+      container.style.backgroundColor = 'rgb(210, 255, 210)';
+      container.style.border = "green solid 2px";
+      container.style.setProperty('--triangle-color', 'green');
+    } else {
+      container.style.backgroundColor = 'rgb(255, 165, 165)';
+      container.style.border = "red solid 2px";
+      container.style.setProperty('--triangle-color', 'red');
+    }
   });
 }
 
+// Process image file and perform callback when ready
+function processImageFile(fileInput, existingImageUrl, callback) {
+  const imageFile = fileInput.files[0];
+  
+  if (imageFile) {
+    const reader = new FileReader();
+    reader.onloadend = function() {
+      callback(reader.result);
+    };
+    reader.readAsDataURL(imageFile);
+  } else if (existingImageUrl) {
+    callback(existingImageUrl);
+  } else {
+    callback('');
+  }
+}
+
+// When the page loads, ensure a warning message is displayed for the image.
+window.addEventListener('DOMContentLoaded', () => {
+  updateImageWarning(imageWarning, imageWarningContainer, false);
+});
+
 // Event listener for when the user selects a file.
 imageUpload.addEventListener('change', function() {
-  if (imageUpload.files.length > 0) {
-    // If a file is selected.
-    imageWarning.forEach(imageWarning => {
-      imageWarning.textContent = "FILE SELECTED SUCCESSFULLY!";
-      imageWarning.style.color = "green";
-    });
-    imageWarningContainer.forEach(imageWarningContainer => {
-      imageWarningContainer.style.backgroundColor = 'rgb(210, 255, 210)'
-      imageWarningContainer.style.border = "green solid 2px";
-      imageWarningContainer.style.setProperty('--triangle-color', 'green');
-    });
-  } else {
-    // If a file is not selected.
-    allImageWarning();
-  }
+  updateImageWarning(imageWarning, imageWarningContainer, imageUpload.files.length > 0);
 });
 
 // Read status toggle.
@@ -89,7 +103,7 @@ function toggleOn() {
 openModal.addEventListener("click", () => {
   modal.showModal();
   imageUpload.value = '';
-  allImageWarning();
+  updateImageWarning(imageWarning, imageWarningContainer, false);
   titleInput.value = '';
   authorInput.value = '';
   
@@ -184,36 +198,35 @@ bookForm.addEventListener('submit', function (event) {
   }
 
   // Handle image file.
-  const imageUploadInput = document.querySelector('#imageUpload');
-  const imageFile = imageUploadInput.files[0];
-  let imageUrl = '';
-
-  const reader = new FileReader();
-  reader.onloadend = function () {
-    imageUrl = reader.result; // Base64 URL.
+  processImageFile(imageUpload, null, (imageUrl) => {
+    if (!imageUrl) {
+      updateImageWarning(imageWarning, imageWarningContainer, false);
+      return;
+    }
 
     const readingStatus = toggleReadSwitch.checked;
-
-    addBookToLibrary(imageUrl, readingStatus, title, author, currentPages, totalPages, rating);
+    // Take parameters, create a book then store it in the array.
+    const newBook = new Book(imageUrl, readingStatus, title, author, currentPages, totalPages, rating, false);
+    myLibrary.push(newBook);
     displayBooks();
     modal.close();
-  };
+  });
+})
 
-  reader.readAsDataURL(imageFile);
+// Event delegation for edit buttons and delete buttons
+bookContainer.addEventListener('click', (event) => {
+  const editButton = event.target.closest('.card-edit-button');
+  const deleteButton = event.target.closest('.card-delete-button');
+  
+  if (editButton) {
+    handleEditButton(editButton);
+  } else if (deleteButton) {
+    handleDeleteButton(deleteButton);
+  }
 });
 
-// Take parameters, create a book then store it in the array.
-function addBookToLibrary(imageUrl, readingStatus, title, author, currentPages, totalPages, rating) {
-  const newBook = new Book(imageUrl, readingStatus, title, author, currentPages, totalPages, rating, false);
-  myLibrary.push(newBook);
-}
-
-// Event delegation for edit buttons.
-bookContainer.addEventListener('click', (event) => {
-
-  const editButton = event.target.closest('.card-edit-button');
-  if (!editButton) return;
-
+// Edit Button.
+function handleEditButton(editButton) {
   const card = editButton.closest('.bottom-card');
   const index = parseInt(card.getAttribute('data-index'));
   const book = myLibrary[index];
@@ -448,7 +461,23 @@ bookContainer.addEventListener('click', (event) => {
 
     newToggleReadSwitch.removeEventListener('change', handleSwitchChange);
   }, { once: true });
-});
+}
+
+// Delete Button.
+function handleDeleteButton(deleteButton) {
+  const cardToDelete = deleteButton.closest('.bottom-card');
+  const bookIndex = cardToDelete.getAttribute("data-index");
+
+  // Find the index, delete only that card.
+  myLibrary.splice(bookIndex, 1);
+
+  // Refresh the display to show updated status.
+  // updatePage();
+  // updateTrade();
+  // updateStatus(myLibrary);
+  // updateRating(myLibrary);
+  displayBooks();
+}
 
 function displayBooks() {
 
@@ -609,22 +638,6 @@ function displayBooks() {
     const deleteButton = document.createElement("button");
     deleteButton.classList.add("card-button", "card-delete-button");
     deleteButton.appendChild(createSVGIcon(deleteIconPath));
-
-    // Delete Button.
-    deleteButton.addEventListener("click", function() {
-      const cardToDelete = this.closest('.bottom-card'); // Find the closest bottom card.
-      const bookIndex = cardToDelete.getAttribute("data-index");
-    
-      // Find the index, delete only that card.
-      myLibrary.splice(bookIndex, 1);
-
-      // Refresh the display to show updated status.
-      updatePage();
-      updateTrade();
-      updateStatus(myLibrary);
-      updateRating(myLibrary);
-      displayBooks();
-    });
 
     // Create the "toggle trade status" button.
     const spanTradingRight = document.createElement('span');
