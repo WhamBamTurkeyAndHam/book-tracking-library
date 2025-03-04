@@ -77,6 +77,17 @@ function processImageFile(fileInput, existingImageUrl, callback) {
   }
 }
 
+function validatePages(currentPages, totalPages, currentPagesElement) {
+  if (currentPages > totalPages) {
+    currentPagesElement.classList.add('shake');
+    currentPagesElement.addEventListener('animationend', () => {
+      currentPagesElement.classList.remove('shake');
+    }, { once: true });
+    return false;
+  }
+  return true;
+}
+
 // When the page loads, ensure a warning message is displayed for the image.
 window.addEventListener('DOMContentLoaded', () => {
   updateImageWarning(imageWarning, imageWarningContainer, false);
@@ -124,7 +135,6 @@ closeEditModal.addEventListener('click', () => {
 // Switch adds or removes extra inputs depending on if you have read a book, or not.
 toggleReadSwitch.addEventListener('change', function () {
   toggleReadStatus(this.checked, currentPageInput, ratingsContainer)
-  console.log(this.checked);
   if (!this.checked) {
     selectedRating = 0;
     updateStars(stars, selectedRating);
@@ -157,6 +167,28 @@ function updateStars(stars, value) {
   });
 }
 
+// Update book statistics
+function updateStatistics() {
+  // Change Pages This Month card.
+  const pageTotal = myLibrary.reduce((sum, book) => sum + book.currentPages, 0);
+  pagesRead.textContent = pageTotal;
+  
+  // Change Books Completed This Year card.
+  const completedBooks = myLibrary.filter(book => book.readingStatus).length;
+  booksRead.textContent = completedBooks;
+  
+  // Change Books Traded card.
+  const tradedCount = myLibrary.filter(book => book.trade).length;
+  booksTrade.textContent = tradedCount;
+  
+  // Change Average Star Rating card.
+  const ratedBooks = myLibrary.filter(book => book.rating > 0);
+  const totalRating = ratedBooks.reduce((sum, book) => sum + book.rating, 0);
+  const averageRating = ratedBooks.length > 0 ? (totalRating / ratedBooks.length).toFixed(2) : 0;
+  
+  booksRating.textContent = averageRating > 0 ? `${averageRating} Stars` : 'No Stars Yet';
+}
+
 // Construct Books here.
 function Book(imageUrl, readingStatus, title, author, currentPages, totalPages, rating, trade) {
   this.imageUrl = imageUrl;
@@ -183,12 +215,8 @@ bookForm.addEventListener('submit', function (event) {
   const currentPages = parseInt(currentPagesInput.value, 10);
   const totalPages = parseInt(totalPagesInput.value, 10);
 
-  if (currentPages > totalPages){
-    currentPageInput.classList.add('shake');
-    currentPageInput.addEventListener('animationend', () => {
-      currentPageInput.classList.remove('shake');
-    });
-    return
+  if (!validatePages(currentPages, totalPages, currentPageInput)) {
+    return;
   }
 
   // Handle image file.
@@ -262,11 +290,9 @@ function handleEditButton(editButton) {
   newToggleReadSwitch.addEventListener('change', handleSwitchChange);
 
   const editStars = newRatingsContainer.querySelectorAll('span');
-
   updateStars(editStars, editSelectedRating);
 
   editStars.forEach(star => {
-    // Remove any existing event listeners to prevent duplicates.
     star.replaceWith(star.cloneNode(true));
   });
 
@@ -303,6 +329,10 @@ function handleEditButton(editButton) {
  // Edit Image Section, as well as update each section.
   const newCurrentPages = parseInt(editCurrentPages.value, 10);
   const newTotalPages = parseInt(editTotalPages.value, 10);
+
+  if (!validatePages(newCurrentPages, newTotalPages, editCurrentPages)) {
+    return;
+  }
 
   processImageFile(newImageUpload, editModal.dataset.hasExistingImage === "true" ? book.imageUrl : null,
     (imageUrl) => {
@@ -351,51 +381,6 @@ function displayBooks() {
     const overlay = document.querySelector('#overlay');
   
     bookWrapper.children.length > 0 ? overlay.classList.add('hidden') : overlay.classList.remove('hidden');
-  }
-
-  // Change Pages This Month card.
-  function updatePage() {
-    const pageTotal = myLibrary.reduce((sum, book) => {
-      return sum + book.currentPages;
-    }, 0);
-    
-    pagesRead.textContent = pageTotal;
-  }
-
-  // Change Books Completed This Year card.
-  function updateStatus(books) {
-    let totalStatus = 0;
-
-    books.forEach(book => {
-      if (book.readingStatus) totalStatus += book.readingStatus;
-    });
-
-    booksRead.textContent = totalStatus;
-  }
-
-  // Change Books Traded card.
-  function updateTrade() {
-    const tradedCount = myLibrary.filter(book => book.trade).length;
-    booksTrade.textContent = tradedCount;
-  }
-
-  // Change Average Star Rating card.
-  function updateRating(books) {
-    let totalRating = 0;
-    let count = 0;
-
-    // Loop through the books array to sum the ratings.
-    books.forEach(book => {
-      if (book.rating) {
-          totalRating += book.rating;
-          count++;
-        }
-    });
-
-    // If the average rating is above a 0, average it. Otherwise leave at 0 (to avoid division by 0)
-    // and simply say 'No Stars Yet'.
-    const averageRating = count > 0 ? (totalRating / count).toFixed(2) : 0;
-    averageRating === 0 ? booksRating.textContent = 'No Stars Yet' : booksRating.textContent = `${averageRating} Stars`;
   }
 
   bookWrapper.innerHTML = '';
@@ -459,7 +444,7 @@ function displayBooks() {
     ratingsContainer.classList.add('ratings-container-small');
 
     // Loop through and make a span for each star.
-    for(i = 0; i < 5; i++) {
+    for(let i = 0; i < 5; i++) {
       const star = document.createElement('span');
       star.textContent = '★'
 
@@ -533,7 +518,6 @@ function displayBooks() {
       const index = card.getAttribute('data-index');
       const book = myLibrary[index];
       book.trade = this.checked;
-      updateTrade();
       displayBooks();
     });
 
@@ -566,7 +550,5 @@ function displayBooks() {
   });
 
   checkContainer();
-  updatePage();
-  updateStatus(myLibrary);
-  updateRating(myLibrary);
+  updateStatistics()
 }
