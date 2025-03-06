@@ -17,15 +17,23 @@
       <div class="main-header-container">
         <h1>My Little Dashboard</h1>
         <div class="search-bar-container">
-          <svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" /></svg>
-          <form action="#">
-            <label for="search-box"></label>
-            <input type="search" name="search-box" id="search-box" placeholder="Search for a Name, an Author, or an ISBN...">
+          <svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+            <title>Search</title>
+            <path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" />
+          </svg>
+          <form action="#" role="search">
+            <label for="search-box" class="visually-hidden">Search books</label>
+            <input type="search" name="search-box" id="search-box" 
+                   placeholder="Search for a Name, an Author, or an ISBN..."
+                   aria-label="Search through book collection">
           </form>
         </div>
         <div class="user-profile-container">
-          <img src="img/a ham and a turkey (upscaled).jpeg" alt="the user profile image">
-          <svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" /></svg>
+          <img src="img/a ham and a turkey (upscaled).jpeg" alt="User profile picture">
+          <svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+            <title>Profile menu</title>
+            <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
+          </svg>
         </div>
       </div>
     </header>
@@ -34,53 +42,53 @@
         <img src="img/logo.png" alt="a small library found on the side of roads">
       </div>
       <nav class="navbar">
-        <div class="sidebar-divider"></div>
-        <ul>
-          <li><a class="sidebar-buttons" href="index.html"><svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" fill="currentColor"/></svg>Home</a></li>
-          <li class="sidebar-buttons" id="openModal"><svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17,13H13V17H11V13H7V11H11V7H13V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" fill="currentColor"/></svg>Add Book</li> <!-- Will be changed to use the 'add book' feature-->
-          <li><a class="sidebar-buttons" href="no-budget.html"><svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8,10V13H14V18H8V21L2,15.5L8,10M22,8.5L16,3V6H10V11H16V14L22,8.5Z" fill="currentColor"/></svg>Trade</a></li>
+        <div class="sidebar-divider" role="separator"></div>
+        <ul role="menu">
+          <li role="none"><button class="sidebar-buttons" href="index.html" role="menuitem"><svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" fill="currentColor"/></svg>Home</button></li>
+          <li role="none"><button class="sidebar-buttons" id="openModal" role="menuitem"><svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M17,13H13V17H11V13H7V11H11V7H13V11H17M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" fill="currentColor"/></svg>Add Book</button></li>
+          <li role="none"><button class="sidebar-buttons" href="no-budget.html" role="menuitem"><svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M8,10V13H14V18H8V21L2,15.5L8,10M22,8.5L16,3V6H10V11H16V14L22,8.5Z" fill="currentColor"/></svg>Trade</button></li>
           <div class="sidebar-divider"></div>
-          <li><a class="sidebar-buttons" href="no-budget.html"><svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,5.5A3.5,3.5 0 0,1 15.5,9A3.5,3.5 0 0,1 12,12.5A3.5,3.5 0 0,1 8.5,9A3.5,3.5 0 0,1 12,5.5M5,8C5.56,8 6.08,8.15 6.53,8.42C6.38,9.85 6.8,11.27 7.66,12.38C7.16,13.34 6.16,14 5,14A3,3 0 0,1 2,11A3,3 0 0,1 5,8M19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14C17.84,14 16.84,13.34 16.34,12.38C17.2,11.27 17.62,9.85 17.47,8.42C17.92,8.15 18.44,8 19,8M5.5,18.25C5.5,16.18 8.41,14.5 12,14.5C15.59,14.5 18.5,16.18 18.5,18.25V20H5.5V18.25M0,20V18.5C0,17.11 1.89,15.94 4.45,15.6C3.86,16.28 3.5,17.22 3.5,18.25V20H0M24,20H20.5V18.25C20.5,17.22 20.14,16.28 19.55,15.6C22.11,15.94 24,17.11 24,18.5V20Z" fill="currentColor"/></svg>About Us</a></li>
-          <li><a class="sidebar-buttons" href="no-budget.html"><svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z" fill="currentColor"/></svg>Contact</a></li>
+          <li><button class="sidebar-buttons" href="no-budget.html"><svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12,5.5A3.5,3.5 0 0,1 15.5,9A3.5,3.5 0 0,1 12,12.5A3.5,3.5 0 0,1 8.5,9A3.5,3.5 0 0,1 12,5.5M5,8C5.56,8 6.08,8.15 6.53,8.42C6.38,9.85 6.8,11.27 7.66,12.38C7.16,13.34 6.16,14 5,14A3,3 0 0,1 2,11A3,3 0 0,1 5,8M19,8A3,3 0 0,1 22,11A3,3 0 0,1 19,14C17.84,14 16.84,13.34 16.34,12.38C17.2,11.27 17.62,9.85 17.47,8.42C17.92,8.15 18.44,8 19,8M5.5,18.25C5.5,16.18 8.41,14.5 12,14.5C15.59,14.5 18.5,16.18 18.5,18.25V20H5.5V18.25M0,20V18.5C0,17.11 1.89,15.94 4.45,15.6C3.86,16.28 3.5,17.22 3.5,18.25V20H0M24,20H20.5V18.25C20.5,17.22 20.14,16.28 19.55,15.6C22.11,15.94 24,17.11 24,18.5V20Z" fill="currentColor"/></svg>About Us</button></li>
+          <li><button class="sidebar-buttons" href="no-budget.html"><svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z" fill="currentColor"/></svg>Contact</button></li>
           <div class="sidebar-divider"></div>
-          <li class="log-out"><a class="sidebar-buttons" href="no-budget.html"><svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7L15.59 8.41L18.17 11H8V13H18.17L15.59 15.58L17 17L22 12M4 5H12V3H4C2.9 3 2 3.9 2 5V19C2 20.1 2.9 21 4 21H12V19H4V5Z" fill="currentColor"/></svg>Log Out</a></li>
+          <li class="log-out"><button class="sidebar-buttons" href="no-budget.html"><svg class="icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7L15.59 8.41L18.17 11H8V13H18.17L15.59 15.58L17 17L22 12M4 5H12V3H4C2.9 3 2 3.9 2 5V19C2 20.1 2.9 21 4 21H12V19H4V5Z" fill="currentColor"/></svg>Log Out</button></li>
         </ul>
       </nav>
     </div>
     <div class="main">
       <div class="top-cards-container">
         <div class="top-card-left">
-          <div class="top-card card-1">
+          <div tabindex="0" class="top-card card-1">
             <h3>Pages This Month</h3>
             <p class="pages-read">0</p>
           </div>
-          <div class="top-card card-2">
+          <div tabindex="0" class="top-card card-2">
             <h3>Books Completed This Year</h3>
             <p class="books-read">0</p>
           </div>
         </div>
         <div class="top-card-right">
-          <div class="top-card card-3">
+          <div tabindex="0" class="top-card card-3">
             <h3>Books Traded</h3>
             <p class="books-traded">0</p>
           </div>
-          <div class="top-card card-4">
+          <div tabindex="0" class="top-card card-4">
             <h3>Average Star Rating</h3>
             <p class="books-ratings">No Stars Yet</p>
           </div>
         </div>
       </div>
       <div class="bottom-cards-container">
-        <div class="overlay" id="overlay">
+        <div class="overlay" id="overlay" aria-live="polite" aria-atomic="true">
           <svg class="large-icons" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M11,18H13V16H11V18M12,6A4,4 0 0,0 8,10H10A2,2 0 0,1 12,8A2,2 0 0,1 14,10C14,12 11,11.75 11,15H13C13,12.75 16,12.5 16,10A4,4 0 0,0 12,6M5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3Z" fill="#999999" /></svg>
           <p>Try adding a book.</p>
         </div>
         <div class="book-wrapper" id="bookWrapper"></div>
       </div>
-    <dialog class="modal" id="modal">
+    <dialog class="modal" id="modal" aria-labelledby="modalTitle" role="dialog">
       <div class="modal-content">
         <form class="add-book">
-          <h3>Add Book...</h3>
+          <h3 id="modalTitle">Add Book</h3>
           <button class="modal-close" id="closeModal">&times;</button>
           <input class="input" type="text" id="title" required placeholder="Title...">
           <input class="input" type="text" id="author" required placeholder="Author...">

@@ -557,6 +557,7 @@ function displayBooks() {
     // Append the everything to the bottomCard.
     bottomCard.append(bookCardLeft, bookCardMiddle, bottomCardRight);
     bottomCard.setAttribute("data-index", index); // Assign data-index.
+    bottomCard.setAttribute('tabindex', '0');
 
     // Append the bottomCard to the main container.
     bookWrapper.appendChild(bottomCard);

@@ -1,3 +1,33 @@
+/* Accessibility */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+option:focus-visible, 
+optgroup:focus-visible, 
+legend:focus-visible, 
+fieldset:focus-visible, 
+output:focus-visible,
+input[type = search]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--quaternary-giants-orange);
+  outline-offset: 2px;
+  position: relative;
+  z-index: 10;
+}
+
 :root {
   --main-vanilla: rgb(242, 243, 174);
   --secondary-flax: rgb(237, 211, 130);
@@ -15,7 +45,16 @@
   font-family: "Playfair Display", serif;
 }
 
-body, button, input, select, textarea, option, optgroup, legend, fieldset, output {
+body, 
+button, 
+input, 
+select, 
+textarea, 
+option, 
+optgroup, 
+legend, 
+fieldset, 
+output {
   font-family: "Playfair Display", serif;
   font-optical-sizing: auto;
   font-style: normal;
@@ -152,14 +191,17 @@ input[type = search] {
   text-decoration: none;
 }
 
-.sidebar-buttons:hover {
+.sidebar-buttons:hover,
+button.sidebar-buttons:hover {
   color: var(--main-vanilla);
   background-color: var(--quinary-oxford-blue);
   transition: all 0.15s ease-in;
   font-weight: 600;
 }
 
-.sidebar-buttons {
+.sidebar-buttons,
+button.sidebar-buttons {
+  background-color: var(--secondary-flax);
   color: var(--quinary-oxford-blue);
   transition: all 0.15s ease-in;
   font-size: 1.5rem;
@@ -169,6 +211,8 @@ input[type = search] {
   gap: 5rem;
   white-space: nowrap;
   cursor: pointer;
+  border: none;
+  width: 100%;
 }
 
 /* Main */
