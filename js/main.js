@@ -1,4 +1,4 @@
-import CircleProgress from '../node_modules/js-circle-progress/dist/circle-progress.js';
+
 
 // Store const here.
 const pagesRead = document.querySelector('.pages-read');
@@ -425,23 +425,6 @@ function displayBooks() {
     
       bookImageOverlay.appendChild(progressCircle);
       bookCardLeft.append(bookImage, bookImageOverlay);
-    
-      // Initialize after DOM insertion.
-      setTimeout(() => {
-        new CircleProgress(`#progress-${index}`, {
-          value: percentage,
-          max: 100,
-          textFormat: 'percent',
-          animation: true,
-          animationStartAngle: -Math.PI / 2,
-          circleWidth: 10,
-          textLineHeight: 30,
-          // Ensure container reference
-          container: document.querySelector(`#progress-${index}`),
-          // Add responsive sizing
-          viewBox: '0 0 100 100'
-        });
-      }, 0);
     }
 
     // For the middle.
