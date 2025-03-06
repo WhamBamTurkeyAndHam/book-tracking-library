@@ -275,7 +275,7 @@ input[type = search] {
 
 .book-wrapper {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(700px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(650px, 1fr));
   grid-template-rows: repeat(auto-fill, minmax(350px, 1fr));
   gap: 3rem;
   margin: 5rem 0 5rem 0;
@@ -308,6 +308,7 @@ input[type = search] {
 .bottom-card-left {
   overflow: hidden;
   border-radius: 1rem 0 0 1rem;
+  position: relative;
 }
 
 .bottom-card-left img {
@@ -319,7 +320,51 @@ input[type = search] {
 }
 
 .bottom-card-left img:hover {
-  transform: scale(1.05);
+  transform: scale(1.02);
+  filter: brightness(50%) blur(5px);
+}
+
+.bottom-card-left .bottom-card-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.bottom-card-left:hover .bottom-card-overlay {
+  opacity: 1;
+}
+
+circle-progress::part(base) {
+  width: 200px; 
+  height: auto;
+}
+
+circle-progress::part(circle) {
+  stroke-width: 2px;
+  stroke: var(--main-vanilla);
+}
+
+circle-progress::part(value) {
+  stroke: var(--secondary-flax);
+  stroke-linecap: round;
+  stroke-width: 8px;
+}
+
+circle-progress::part(text) {
+  fill: var(--secondary-flax);
+}
+
+/* Read State */
+circle-progress[value="100"]::part(value) {
+  stroke: var(--tertiary-sandy-brown);
+}
+
+circle-progress[value="100"]::part(text) {
+  fill: var(--tertiary-sandy-brown);
 }
 
 .book-trade,

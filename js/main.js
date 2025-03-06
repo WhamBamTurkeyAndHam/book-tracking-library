@@ -1,3 +1,5 @@
+import CircleProgress from '../node_modules/js-circle-progress/dist/circle-progress.js';
+
 // Store const here.
 const pagesRead = document.querySelector('.pages-read');
 const booksRead = document.querySelector('.books-read');
@@ -404,14 +406,44 @@ function displayBooks() {
     bottomCardButtons.classList.add('card-button-container');
 
     // For left side.
+
     if (book.imageUrl) {
       const bookImage = document.createElement('img');
       bookImage.classList.add('bottom-card-left');
       bookImage.src = book.imageUrl;
       bookImage.alt = `${book.title} cover`;
-      bookCardLeft.appendChild(bookImage); // Append the img container to the div (Left Side).
-    }
     
+      const bookImageOverlay = document.createElement('div');
+      bookImageOverlay.classList.add('bottom-card-overlay');
+    
+      // Create circle-progress element.
+      const progressCircle = document.createElement('circle-progress');
+      progressCircle.setAttribute('value', (book.currentPages / book.totalPages * 100).toFixed(0));
+      progressCircle.setAttribute('max', '100');
+      progressCircle.setAttribute('text-format', 'percent');
+      progressCircle.style.setProperty('--size', '80px');
+    
+      bookImageOverlay.appendChild(progressCircle);
+      bookCardLeft.append(bookImage, bookImageOverlay);
+    
+      // Initialize after DOM insertion.
+      setTimeout(() => {
+        new CircleProgress(`#progress-${index}`, {
+          value: percentage,
+          max: 100,
+          textFormat: 'percent',
+          animation: true,
+          animationStartAngle: -Math.PI / 2,
+          circleWidth: 10,
+          textLineHeight: 30,
+          // Ensure container reference
+          container: document.querySelector(`#progress-${index}`),
+          // Add responsive sizing
+          viewBox: '0 0 100 100'
+        });
+      }, 0);
+    }
+
     // For the middle.
 
     book.trade === true ? bookCardMiddle.classList.add('book-trade') : 
@@ -550,5 +582,5 @@ function displayBooks() {
   });
 
   checkContainer();
-  updateStatistics()
+  updateStatistics();
 }
