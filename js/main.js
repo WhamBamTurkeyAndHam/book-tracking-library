@@ -1,5 +1,3 @@
-
-
 // Store const here.
 const pagesRead = document.querySelector('.pages-read');
 const booksRead = document.querySelector('.books-read');
