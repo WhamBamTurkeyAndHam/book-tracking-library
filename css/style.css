@@ -400,6 +400,7 @@ circle-progress::part(value) {
 
 circle-progress::part(text) {
   fill: var(--secondary-flax);
+  font-family: "Playfair Display", serif;
 }
 
 /* Read State */
