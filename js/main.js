@@ -190,15 +190,16 @@ function updateStatistics() {
 }
 
 // Construct Books here.
-function Book(imageUrl, readingStatus, title, author, currentPages, totalPages, rating, trade) {
-  this.imageUrl = imageUrl;
-  this.readingStatus = readingStatus;
-  this.title = title;
-  this.author = author;
-  this.currentPages = currentPages;
-  this.totalPages = totalPages;
-  this.rating = rating;
-  this.trade = trade;
+class Book {constructor (imageUrl, readingStatus, title, author, currentPages, totalPages, rating, trade) {
+    this.imageUrl = imageUrl;
+    this.readingStatus = readingStatus;
+    this.title = title;
+    this.author = author;
+    this.currentPages = currentPages;
+    this.totalPages = totalPages;
+    this.rating = rating;
+    this.trade = trade;
+  }
 }
 
 bookForm.addEventListener('submit', function (event) {
