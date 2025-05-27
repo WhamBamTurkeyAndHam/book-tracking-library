@@ -174,7 +174,7 @@ function updateStatistics() {
   pagesRead.textContent = pageTotal;
   
   // Change Books Completed This Year card.
-  const completedBooks = myLibrary.filter(book => book.readingStatus).length;
+  const completedBooks = myLibrary.filter(book => book.isCompleted()).length;
   booksRead.textContent = completedBooks;
   
   // Change Books Traded card.
@@ -199,6 +199,20 @@ class Book {constructor (imageUrl, readingStatus, title, author, currentPages, t
     this.totalPages = totalPages;
     this.rating = rating;
     this.trade = trade;
+  }
+
+  getProgressPercentage() {
+    return (this.currentPages / this.totalPages * 100).toFixed(0);
+  }
+
+  isCompleted() {
+    return this.currentPages >= this.totalPages;
+  }
+
+  setRating(newRating) {
+    if (newRating >= 0 && newRating <= 5) {
+      this.rating = newRating;
+    }
   }
 }
 
@@ -229,7 +243,8 @@ bookForm.addEventListener('submit', function (event) {
 
     const readingStatus = toggleReadSwitch.checked;
     // Take parameters, create a book then store it in the array.
-    const newBook = new Book(imageUrl, readingStatus, title, author, currentPages, totalPages, rating, false);
+    const newBook = new Book(imageUrl, readingStatus, title, author, currentPages, totalPages, 0, false);
+    newBook.setRating(selectedRating);
     myLibrary.push(newBook);
     displayBooks();
     modal.close();
@@ -346,7 +361,7 @@ function handleEditButton(editButton) {
       // Update reading status and pages based on toggle.
       if (newToggleReadSwitch.checked) {
         book.readingStatus = true;
-        book.rating = editSelectedRating;
+        book.setRating(editSelectedRating);
         book.currentPages = newTotalPages;
       } else {
         book.currentPages = newCurrentPages;
@@ -377,7 +392,6 @@ function handleDeleteButton(deleteButton) {
 }
 
 function displayBooks() {
-
   function checkContainer() {
     const overlay = document.querySelector('#overlay');
   
@@ -417,7 +431,7 @@ function displayBooks() {
     
       // Create circle-progress element.
       const progressCircle = document.createElement('circle-progress');
-      progressCircle.setAttribute('value', (book.currentPages / book.totalPages * 100).toFixed(0));
+      progressCircle.setAttribute('value', book.getProgressPercentage());
       progressCircle.setAttribute('max', '100');
       progressCircle.setAttribute('text-format', 'percent');
       progressCircle.style.setProperty('--size', '80px');
